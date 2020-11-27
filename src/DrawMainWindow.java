@@ -35,7 +35,7 @@ public class DrawMainWindow extends JFrame implements ActionListener {
     String[] fontName;// 字体名称
 
     private String names[] = { "newfile", "openfile", "savefile", "pen", "line", "rect", "frect", "oval", "foval",
-            "circle", "fcircle", "roundrect", "froundrect", "word", "stroke", "delete", "move", "fill" };// 定义工具栏图标的名称
+            "circle", "fcircle", "roundrect", "froundrect", "txt", "stroke", "delete", "move", "fill" };// 定义工具栏图标的名称
 
     private Icon icons[];// 定义按钮图标数组
 

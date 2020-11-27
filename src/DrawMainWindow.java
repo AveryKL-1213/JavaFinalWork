@@ -29,20 +29,20 @@ public class DrawMainWindow extends JFrame implements ActionListener {
     private JMenuItem helpin, helpmain, colorchoice, strokeitem;// help菜单
     // private Icon nf, sf, of;// 文件菜单项的图标对象
     private JLabel startbar;// 状态栏
-    private Canvas drawarea;// 画布类的定义
-    private HelpWindow helpobject; // 定义一个帮助类对象
-    private FileManage fileclass;// 文件对象
+    private Canvas canvas;// 画布类的定义
+    private HelpWindow helpwindow; // 定义一个帮助类对象
+    private FileManage filemanage;// 文件对象
     String[] fontName;// 字体名称
 
     private String names[] = { "newfile", "openfile", "savefile", "pen", "line", "rect", "frect", "oval", "foval",
-            "circle", "fcircle", "roundrect", "froundrect", "txt", "stroke", "delete", "move", "fill", "brush", "clear",
+            "circle", "fcircle", "roundrect", "froundrect", "brush", "txt", "stroke", "delete", "move", "fill", "clear",
             "color" };// 定义工具栏图标的名称
 
     private Icon icons[];// 定义按钮图标数组
 
     private String tiptext[] = { // 这里是鼠标移到相应的按钮上给出相应的提示
-            "新建画布", "打开画布", "保存画布", "铅笔", "直线", "矩形", "填充矩形", "椭圆", "填充椭圆", "圆", "填充圆", "圆角矩形", "填充圆角矩形", "文字的输入",
-            "选择线条的粗细", "删除图形", "移动图形", "填充图形", "画刷", "清空", "颜色" };
+            "新建画布", "打开画布", "保存画布", "铅笔", "直线", "矩形", "填充矩形", "椭圆", "填充椭圆", "圆", "填充圆", "圆角矩形", "填充圆角矩形", "画刷", "文字的输入",
+            "选择线条的粗细", "删除图形", "移动图形", "填充图形", "清空", "颜色" };
 
     JButton button[];// 定义工具条中的按钮组
     private JCheckBox bold, italic;// 工具条字体的风格（复选框）
@@ -179,53 +179,12 @@ public class DrawMainWindow extends JFrame implements ActionListener {
 
         // 状态栏的初始化
         startbar = new JLabel("DrawAnyway");
-
-        // 选色区初始化
-        // Icon cicon = new ImageIcon("../images/color.png");
-        // JButton cbutton = new JButton("", cicon);
-        // cbutton.setToolTipText("自定义颜色");
-        button[20].addActionListener(e -> drawarea.chooseColor());
-        // JButton colorButton[] = new JButton[20];// 参考颜色按钮
-        // JToolBar colorButtonPanel = new JToolBar(JToolBar.VERTICAL);// 参考颜色栏初始化
-        // colorButtonPanel.setLayout(new GridLayout(2, 15, 5, 5));
-        // colorButtonPanel.setFloatable(false);// 不可浮动
-        // for (int i = 0; i < 20; i++) {
-        // colorButton[i] = new JButton("");// 创建颜色栏中的按钮
-        // colorButtonPanel.add(colorButton[i]);
-        // }
-        // // 20个参考颜色按钮初始化
-        // colorButton[0].setBackground(new Color(0xffffff));
-        // colorButton[1].setBackground(new Color(0x000000));
-        // colorButton[2].setBackground(new Color(0x848683));
-        // colorButton[3].setBackground(new Color(0xc3c3be));
-        // colorButton[4].setBackground(new Color(0xcdbedb));
-        // colorButton[5].setBackground(new Color(0xb97b56));
-        // colorButton[6].setBackground(new Color(0xffadd6));
-        // colorButton[7].setBackground(new Color(0xf01e1f));
-        // colorButton[8].setBackground(new Color(0x89010d));
-        // colorButton[9].setBackground(new Color(0xfef007));
-        // colorButton[10].setBackground(new Color(0xffc80c));
-        // colorButton[11].setBackground(new Color(0xff7c26));
-        // colorButton[12].setBackground(new Color(0xefe2ab));
-        // colorButton[13].setBackground(new Color(0xb6e51d));
-        // colorButton[14].setBackground(new Color(0x24b04f));
-        // colorButton[15].setBackground(new Color(0x93dceb));
-        // colorButton[16].setBackground(new Color(0x6997bb));
-        // colorButton[17].setBackground(new Color(0x07a0e6));
-        // colorButton[18].setBackground(new Color(0xd9a2dc));
-        // colorButton[19].setBackground(new Color(0x9c4ca1));
-        // for (int i = 0; i < 20; i++) {// 给参考颜色按钮添加事件，按下时将当前颜色设置成与选中参考颜色相同
-        // int finalI = i;
-        // colorButton[i].addActionListener(e ->
-        // drawarea.colorBar(colorButton[finalI].getBackground().getRed(),
-        // colorButton[finalI].getBackground().getGreen(),
-        // colorButton[finalI].getBackground().getBlue()));
-        // }
+        button[20].addActionListener(e -> canvas.chooseColor());
 
         // 绘画区的初始化
-        drawarea = new Canvas(this);
-        helpobject = new HelpWindow(this);
-        fileclass = new FileManage(this, drawarea);
+        canvas = new Canvas(this);
+        helpwindow = new HelpWindow(this);
+        filemanage = new FileManage(this, canvas);
 
         Container con = getContentPane();// 得到内容面板
         Toolkit tool = getToolkit();// 得到一个Toolkit类的对象（主要用于得到屏幕的大小）
@@ -233,17 +192,13 @@ public class DrawMainWindow extends JFrame implements ActionListener {
         con.setLayout(null);
         toolPanel.setBounds(0, 0, 130, 1000);// 给各工具栏安排位置
         startbar.setBounds(dim.width - 300, dim.height - 150, 300, 100);
-        drawarea.setBounds(130, 0, dim.width - 10, dim.height - 200);
-        // colorButtonPanel.setBounds(130, dim.height - 180, 500, 100);
+        canvas.setBounds(130, 0, dim.width - 10, dim.height - 200);
         fontpanel.setBounds(130, dim.height - 190, 200, 50);
-        // cbutton.setBounds(dim.width - 600, dim.height - 190, 450, 50);
         con.add(toolPanel);// 将各工具栏添加到主面板内
-        con.add(drawarea);
+        con.add(canvas);
         con.add(startbar);
-        // con.add(colorButtonPanel);
         con.add(fontpanel);
-        // con.add(cbutton);
-        con.add(drawarea.tarea);
+        con.add(canvas.tarea);
         setBounds(0, 0, dim.width, dim.height);
         setVisible(true);
         validate();
@@ -257,43 +212,46 @@ public class DrawMainWindow extends JFrame implements ActionListener {
 
     // 事件的处理
     public void actionPerformed(ActionEvent e) {
-        for (int i = 3; i <= 13; i++) {// 画各类图形
+        for (int i = 3; i <= 14; i++) {// 图形工具
             if (e.getSource() == button[i]) {
-                drawarea.setChosenStatus(i);
-                drawarea.createNewitem();
-                drawarea.repaint();
+                canvas.setChosenStatus(i);
+                canvas.createNewitem();
+                canvas.repaint();
             }
         }
-        if (e.getSource() == button[14] || e.getSource() == strokeitem) {
-            drawarea.setStroke();// 画笔粗细的调整
-        } else if (e.getSource() == button[15]) {
-            drawarea.setChosenStatus(15);// 删除一个图形
+        if (e.getSource() == button[15] || e.getSource() == strokeitem) {
+            canvas.setStroke();// 画笔粗细的调整
         } else if (e.getSource() == button[16]) {
-            drawarea.setChosenStatus(16);// 拖动图形
-        } else if (e.getSource() == editgraph) {
-            drawarea.setChosenStatus(17);// 改变已有图形大小
-        } else if (e.getSource() == editcolor) {
-            drawarea.setChosenStatus(18);// 改变已有图形颜色
-        } else if (e.getSource() == editstroke) {
-            drawarea.setChosenStatus(19);// 改变已有图形线型
+            canvas.setChosenStatus(15);// 删除一个图形
         } else if (e.getSource() == button[17]) {
-            drawarea.setChosenStatus(20);// 填充图片
+            canvas.setChosenStatus(16);// 拖动图形
+        } else if (e.getSource() == editgraph) {
+            canvas.setChosenStatus(17);// 改变已有图形大小
+        } else if (e.getSource() == editcolor) {
+            canvas.setChosenStatus(18);// 改变已有图形颜色
+        } else if (e.getSource() == editstroke) {
+            canvas.setChosenStatus(19);// 改变已有图形线型
+        } else if (e.getSource() == button[18]) {
+            canvas.setChosenStatus(20);// 填充图片
         } else if (e.getSource() == edittext) {
-            drawarea.setChosenStatus(21);// 编辑已输入的文字
+            canvas.setChosenStatus(21);// 编辑已输入的文字
+        } else if (e.getSource() == button[19]) {
+            filemanage.newFile();// 清空
         } else if (e.getSource() == newfile || e.getSource() == button[0]) {
-            fileclass.newFile();// 新建
+            filemanage.saveFile();// 保存
+            filemanage.newFile();// 新建
         } else if (e.getSource() == openfile || e.getSource() == button[1]) {
-            fileclass.openFile();// 打开
+            filemanage.openFile();// 打开
         } else if (e.getSource() == savefile || e.getSource() == button[2]) {
-            fileclass.saveFile();// 保存
+            filemanage.saveFile();// 保存
         } else if (e.getSource() == exit) {
             System.exit(0);// 退出程序
         } else if (e.getSource() == colorchoice) {
-            drawarea.chooseColor();// 颜色的选择
+            canvas.chooseColor();// 颜色的选择
         } else if (e.getSource() == helpin) {
-            helpobject.AboutBook();// 帮助信息
+            helpwindow.AboutBook();// 帮助信息
         } else if (e.getSource() == helpmain) {
-            helpobject.MainHelp();// 帮助主题
+            helpwindow.MainHelp();// 帮助主题
         }
     }
 
@@ -304,19 +262,19 @@ public class DrawMainWindow extends JFrame implements ActionListener {
             if (ie.getSource() == bold)// 字体粗体
             {
                 if (ie.getStateChange() == ItemEvent.SELECTED)
-                    drawarea.setFont(1, Font.BOLD);
+                    canvas.setFont(1, Font.BOLD);
                 else
-                    drawarea.setFont(1, Font.PLAIN);
+                    canvas.setFont(1, Font.PLAIN);
             } else if (ie.getSource() == italic)// 字体斜体
             {
                 if (ie.getStateChange() == ItemEvent.SELECTED)
-                    drawarea.setFont(2, Font.ITALIC);
+                    canvas.setFont(2, Font.ITALIC);
                 else
-                    drawarea.setFont(2, Font.PLAIN);
+                    canvas.setFont(2, Font.PLAIN);
 
             } else if (ie.getSource() == styles)// 字体的名称
             {
-                drawarea.style = fontName[styles.getSelectedIndex()];
+                canvas.style = fontName[styles.getSelectedIndex()];
             }
         }
 

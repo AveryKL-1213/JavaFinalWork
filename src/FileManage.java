@@ -8,21 +8,21 @@ import javax.swing.*;
 //文件类 （文件的打开、新建、保存）
 public class FileManage {
     private DrawMainWindow drawpad;
-    Canvas drawarea = null;
+    Canvas canvas = null;
 
     FileManage(DrawMainWindow dp, Canvas da) {
         drawpad = dp;
-        drawarea = da;
+        canvas = da;
     }
 
     public void newFile() {
         // 新建图像
-        drawarea.setIndex(0);
-        drawarea.setChosenStatus(3);// 设置默认为随笔画
-        drawarea.setColor(Color.black);// 设置颜色
-        drawarea.setStroke(1.0f);// 设置画笔的粗细
-        drawarea.createNewitem();
-        drawarea.repaint();
+        canvas.setIndex(0);
+        canvas.setChosenStatus(3);// 设置默认为随笔画
+        canvas.setColor(Color.black);// 设置颜色
+        canvas.setStroke(1.0f);// 设置画笔的粗细
+        canvas.createNewitem();
+        canvas.repaint();
     }
 
     public void openFile() {
@@ -56,13 +56,13 @@ public class FileManage {
                 DrawGraph inputRecord;
                 countNumber = input.readInt();
                 for (int i = 0; i < countNumber; i++) {
-                    drawarea.setIndex(i);
+                    canvas.setIndex(i);
                     inputRecord = (DrawGraph) input.readObject();
-                    drawarea.itemList[i] = inputRecord;
+                    canvas.itemList[i] = inputRecord;
                 }
-                drawarea.createNewitem();
+                canvas.createNewitem();
                 input.close();
-                drawarea.repaint();
+                canvas.repaint();
             } catch (FileNotFoundException e) {
                 JOptionPane.showMessageDialog(drawpad, "没有找到源文件！", "没有找到源文件", JOptionPane.ERROR_MESSAGE);
             } catch (IOException e) {
@@ -100,10 +100,10 @@ public class FileManage {
                 ObjectOutputStream output = new ObjectOutputStream(fos);
                 // Drawing record;
 
-                output.writeInt(drawarea.getIndex());
+                output.writeInt(canvas.getIndex());
 
-                for (int i = 0; i < drawarea.getIndex(); i++) {
-                    DrawGraph p = drawarea.itemList[i];
+                for (int i = 0; i < canvas.getIndex(); i++) {
+                    DrawGraph p = canvas.itemList[i];
                     output.writeObject(p);
                     output.flush();// 刷新该流的缓冲。此操作将写入所有已缓冲的输出字节，并将它们刷新到底层流中。
                     // 将所有的图形信息强制的转换成父类线性化存储到文件中

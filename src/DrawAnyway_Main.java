@@ -5,5 +5,4 @@ public class DrawAnyway_Main {
     public static void main(String[] args) {
         new DrawMainWindow("DrawAnyway_Java");
     }
-
 }

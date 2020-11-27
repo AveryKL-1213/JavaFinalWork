@@ -60,7 +60,7 @@ public class Canvas extends JPanel {
 
     // 新建一个图形的基本单元对象的程序段
     void createNewitem() {
-        if (chosenStatus == 13)// 字体的输入光标相应的设置为文本输入格式
+        if (chosenStatus == 14)// 字体的输入光标相应的设置为文本输入格式
             setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
         else
             setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
@@ -97,10 +97,13 @@ public class Canvas extends JPanel {
                 itemList[index] = new fillRoundRect();
                 break;
             case 13:
+                // 画刷
+                break;
+            case 14:
                 itemList[index] = new Word();
                 break;
         }
-        if (chosenStatus >= 3 && chosenStatus <= 13) {
+        if (chosenStatus >= 3 && chosenStatus <= 14) {
             itemList[index].type = chosenStatus;
             itemList[index].R = R;
             itemList[index].G = G;
@@ -248,7 +251,7 @@ public class Canvas extends JPanel {
 
     public void deletePaint(DrawGraph nowdrawing) {// 删除
         int choice = nowdrawing.gettypechoice();
-        if (choice >= 3 && choice <= 13) {
+        if (choice >= 3 && choice <= 14) {
             itemList[chooseni] = new Line();
         }
     }
@@ -314,7 +317,7 @@ public class Canvas extends JPanel {
                     createNewitem();// 创建新的图形的基本单元对象
                 }
                 // 如果选择图形的文字输入，则进行下面的操作
-                if (chosenStatus == 13) {
+                if (chosenStatus == 14) {
                     tx = me.getX();
                     ty = me.getY();
                     tarea.setBounds(tx, ty, 0, 0);
@@ -347,7 +350,7 @@ public class Canvas extends JPanel {
                 if (chosenStatus == 3) {// 随笔画绘制结束
                     itemList[index].x1 = me.getX();
                     itemList[index].y1 = me.getY();
-                } else if (chosenStatus == 13) {// 文本框绘制结束
+                } else if (chosenStatus == 14) {// 文本框绘制结束
                     tarea.setBounds(Math.min(tx, me.getX()) + 130, Math.min(ty, me.getY()), Math.abs(tx - me.getX()),
                             Math.abs(ty - me.getY()));// 绘制文本框
                     String input;
@@ -360,7 +363,7 @@ public class Canvas extends JPanel {
                     itemList[index].s2 = style;// 设置字体
 
                     index++;
-                    chosenStatus = 13;
+                    chosenStatus = 14;
                     createNewitem();// 创建新的图形的基本单元对象
                     repaint();
                     tarea.setText("");// 重设文本框，为下一次使用做准备
@@ -388,7 +391,7 @@ public class Canvas extends JPanel {
                 index++;
                 createNewitem();// 创建新的图形的基本单元对象
                 repaint();
-            } else if (chosenStatus == 16) {
+            } else if (chosenStatus == 17) {
                 if (chooseni >= 0) {// 移动的过程
                     itemList[chooseni].x1 = itemList[chooseni].x1 + me.getX() - x0;
                     itemList[chooseni].y1 = itemList[chooseni].y1 + me.getY() - y0;
@@ -398,13 +401,13 @@ public class Canvas extends JPanel {
                     y0 = me.getY();
                     repaint();
                 }
-            } else if (chosenStatus == 17) {// 放大缩小的过程
+            } else if (chosenStatus == 18) {// 放大缩小的过程
                 if (chooseni >= 0) {
                     itemList[chooseni].x2 = me.getX();
                     itemList[chooseni].y2 = me.getY();
                     repaint();
                 }
-            } else if (chosenStatus >= 3 && chosenStatus <= 12) {// 绘制图形的过程
+            } else if (chosenStatus >= 3 && chosenStatus <= 14) {// 绘制图形的过程
                 itemList[index].x2 = me.getX();
                 itemList[index].y2 = me.getY();
                 repaint();

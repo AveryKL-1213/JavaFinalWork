@@ -1,4 +1,4 @@
-package DrawPad1.src;
+package JavaFinalWork.src;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;

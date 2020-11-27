@@ -1,4 +1,4 @@
-package DrawPad1.src;
+package JavaFinalWork.src;
 
 import java.awt.Color;
 import java.io.*;

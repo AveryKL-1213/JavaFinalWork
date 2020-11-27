@@ -1,3 +1,4 @@
+package JavaFinalWork.src;
 
 //主函数类
 public class Draw_pad {

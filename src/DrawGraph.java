@@ -9,11 +9,8 @@ import java.io.Serializable;
 //图形绘制类 用于绘制各种图形
 //父类，基本图形单元，用到串行的接口，保存使用到
 //公共的属性放到超类中，子类可以避免重复定义
-public class Drawing implements Serializable {
+public class DrawGraph implements Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     int x1, x2, y1, y2; // 定义坐标属性
@@ -36,7 +33,7 @@ public class Drawing implements Serializable {
     }// 判断当前点是否在此图形内（或附近），选择图形时使用
 }
 
-class Line extends Drawing// 直线类
+class Line extends DrawGraph// 直线类
 {
     private static final long serialVersionUID = 1L;
 
@@ -72,7 +69,7 @@ class Line extends Drawing// 直线类
     }
 }
 
-class Rect extends Drawing {// 矩形类
+class Rect extends DrawGraph {// 矩形类
 
     private static final long serialVersionUID = 1L;
 
@@ -96,7 +93,7 @@ class Rect extends Drawing {// 矩形类
     }
 }
 
-class fillRect extends Drawing {// 实心矩形类
+class fillRect extends DrawGraph {// 实心矩形类
 
     private static final long serialVersionUID = 1L;
 
@@ -120,7 +117,7 @@ class fillRect extends Drawing {// 实心矩形类
     }
 }
 
-class Oval extends Drawing {// 椭圆类
+class Oval extends DrawGraph {// 椭圆类
 
     private static final long serialVersionUID = 1L;
 
@@ -147,7 +144,7 @@ class Oval extends Drawing {// 椭圆类
     }
 }
 
-class fillOval extends Drawing {// 实心椭圆类
+class fillOval extends DrawGraph {// 实心椭圆类
 
     private static final long serialVersionUID = 1L;
 
@@ -174,7 +171,7 @@ class fillOval extends Drawing {// 实心椭圆类
     }
 }
 
-class Circle extends Drawing {// 圆形类
+class Circle extends DrawGraph {// 圆形类
 
     private static final long serialVersionUID = 1L;
 
@@ -204,7 +201,7 @@ class Circle extends Drawing {// 圆形类
     }
 }
 
-class fillCircle extends Drawing {// 实心圆类
+class fillCircle extends DrawGraph {// 实心圆类
 
     private static final long serialVersionUID = 1L;
 
@@ -233,7 +230,7 @@ class fillCircle extends Drawing {// 实心圆类
     }
 }
 
-class RoundRect extends Drawing {// 圆角矩形类
+class RoundRect extends DrawGraph {// 圆角矩形类
 
     private static final long serialVersionUID = 1L;
 
@@ -258,7 +255,7 @@ class RoundRect extends Drawing {// 圆角矩形类
 
 }
 
-class fillRoundRect extends Drawing {// 实心圆角矩形类
+class fillRoundRect extends DrawGraph {// 实心圆角矩形类
 
     private static final long serialVersionUID = 1L;
 
@@ -283,7 +280,7 @@ class fillRoundRect extends Drawing {// 实心圆角矩形类
 
 }
 
-class Pencil extends Drawing {// 随笔画类
+class Pencil extends DrawGraph {// 随笔画类
 
     private static final long serialVersionUID = 1L;
 
@@ -300,7 +297,7 @@ class Pencil extends Drawing {// 随笔画类
     // in函数继承返回false，即随笔画不能被选中
 }
 
-class Word extends Drawing {// 输入文字类
+class Word extends DrawGraph {// 输入文字类
 
     private static final long serialVersionUID = 1L;
 

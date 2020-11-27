@@ -6,11 +6,11 @@ import java.io.*;
 import javax.swing.*;
 
 //文件类 （文件的打开、新建、保存）
-public class FileClass {
-    private DrawPad drawpad;
-    DrawArea drawarea = null;
+public class FileManage {
+    private DrawMainWindow drawpad;
+    Canvas drawarea = null;
 
-    FileClass(DrawPad dp, DrawArea da) {
+    FileManage(DrawMainWindow dp, Canvas da) {
         drawpad = dp;
         drawarea = da;
     }
@@ -53,11 +53,11 @@ public class FileClass {
                 ObjectInputStream input = new ObjectInputStream(ifs);
 
                 int countNumber = 0;
-                Drawing inputRecord;
+                DrawGraph inputRecord;
                 countNumber = input.readInt();
                 for (int i = 0; i < countNumber; i++) {
                     drawarea.setIndex(i);
-                    inputRecord = (Drawing) input.readObject();
+                    inputRecord = (DrawGraph) input.readObject();
                     drawarea.itemList[i] = inputRecord;
                 }
                 drawarea.createNewitem();
@@ -103,7 +103,7 @@ public class FileClass {
                 output.writeInt(drawarea.getIndex());
 
                 for (int i = 0; i < drawarea.getIndex(); i++) {
-                    Drawing p = drawarea.itemList[i];
+                    DrawGraph p = drawarea.itemList[i];
                     output.writeObject(p);
                     output.flush();// 刷新该流的缓冲。此操作将写入所有已缓冲的输出字节，并将它们刷新到底层流中。
                     // 将所有的图形信息强制的转换成父类线性化存储到文件中

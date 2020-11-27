@@ -15,12 +15,12 @@ import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
 //绘图区类（各种图形的绘制和鼠标事件）
-public class DrawArea extends JPanel {
+public class Canvas extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    DrawPad drawpad = null;
-    Drawing[] itemList = new Drawing[5000];// 绘制图形及相关参数全部存到该数组
+    DrawMainWindow drawpad = null;
+    DrawGraph[] itemList = new DrawGraph[5000];// 绘制图形及相关参数全部存到该数组
 
     int chooseni = 0;// 当前选中图形的数组下标
     int x0, y0;// 记录移动图形鼠标起始位置
@@ -34,7 +34,7 @@ public class DrawArea extends JPanel {
     JTextArea tarea = new JTextArea("");
     int tx, ty;
 
-    DrawArea(DrawPad dp) {
+    Canvas(DrawMainWindow dp) {
         drawpad = dp;
         setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         // 把鼠标设置成十字形
@@ -54,7 +54,7 @@ public class DrawArea extends JPanel {
         } // 将itemList数组重画一遍
     }
 
-    void draw(Graphics2D g2d, Drawing i) {
+    void draw(Graphics2D g2d, DrawGraph i) {
         i.draw(g2d);// 将画笔传到个各类的子类中
     }
 
@@ -226,7 +226,7 @@ public class DrawArea extends JPanel {
             f2 = font;
     }
 
-    public void fillColor(Drawing nowdrawing) {// 填充
+    public void fillColor(DrawGraph nowdrawing) {// 填充
         int choice = nowdrawing.gettypechoice();// 用于判断填充图形类型
         if (choice == 5) {
             itemList[chooseni] = new fillRect();
@@ -246,7 +246,7 @@ public class DrawArea extends JPanel {
         itemList[chooseni].B = B;
     }
 
-    public void deletePaint(Drawing nowdrawing) {// 删除
+    public void deletePaint(DrawGraph nowdrawing) {// 删除
         int choice = nowdrawing.gettypechoice();
         if (choice >= 3 && choice <= 13) {
             itemList[chooseni] = new Line();

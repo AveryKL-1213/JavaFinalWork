@@ -17,7 +17,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 
 // 主界面类
-public class DrawPad extends JFrame implements ActionListener {
+public class DrawMainWindow extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,9 +29,9 @@ public class DrawPad extends JFrame implements ActionListener {
     private JMenuItem editgraph, editcolor, editstroke, edittext;// 编辑菜单中的选项
     private Icon nf, sf, of;// 文件菜单项的图标对象
     private JLabel startbar;// 状态栏
-    private DrawArea drawarea;// 画布类的定义
-    private Help helpobject; // 定义一个帮助类对象
-    private FileClass fileclass;// 文件对象
+    private Canvas drawarea;// 画布类的定义
+    private HelpWindow helpobject; // 定义一个帮助类对象
+    private FileManage fileclass;// 文件对象
     String[] fontName;// 字体名称
 
     private String names[] = { "newfile", "openfile", "savefile", "pen", "line", "rect", "frect", "oval", "foval",
@@ -47,7 +47,7 @@ public class DrawPad extends JFrame implements ActionListener {
     private JCheckBox bold, italic;// 工具条字体的风格（复选框）
     private JComboBox<String> styles;// 工具条中的字体的样式（下拉列表）
 
-    DrawPad(String string) {
+    DrawMainWindow(String string) {
         // 主界面的构造函数
         super(string);
         // 菜单的初始化
@@ -230,9 +230,9 @@ public class DrawPad extends JFrame implements ActionListener {
         }
 
         // 绘画区的初始化
-        drawarea = new DrawArea(this);
-        helpobject = new Help(this);
-        fileclass = new FileClass(this, drawarea);
+        drawarea = new Canvas(this);
+        helpobject = new HelpWindow(this);
+        fileclass = new FileManage(this, drawarea);
 
         Container con = getContentPane();// 得到内容面板
         Toolkit tool = getToolkit();// 得到一个Tolkit类的对象（主要用于得到屏幕的大小）

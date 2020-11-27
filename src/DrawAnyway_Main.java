@@ -1,11 +1,10 @@
 package JavaFinalWork.src;
 
 //主函数类
-public class Draw_pad {
-
+public class DrawAnyway_Main {
     // 主函数
     public static void main(String[] args) {
-        new DrawPad("Draw_pad");
+        new DrawMainWindow("DrawPad_Java_ver");
     }
 
 }

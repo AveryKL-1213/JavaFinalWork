@@ -6,9 +6,10 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Java-FinalWork",
+            "name": "Java - FinalWork",
             "request": "launch",
-            "mainClass": "JavaFinalWork.src.Draw_pad"
+            "mainClass": "${file}",
+            "cwd": "${fileDirname}"
         }
     ]
 }

@@ -10,8 +10,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.*;
@@ -43,7 +41,8 @@ public class DrawMainWindow extends JFrame implements ActionListener {
     private Icon icons[];// 定义按钮图标数组
 
     JButton button[];// 定义工具条中的按钮组
-    private JCheckBox bold, italic;// 工具条字体的风格（复选框）
+    // private JCheckBox bold, italic;// 工具条字体的风格（复选框）
+    private JButton bold, italic, plain;// 工具条字体的风格（复选框）
     private JComboBox<String> styles;// 工具条中的字体的样式（下拉列表）
 
     DrawMainWindow(String string) {
@@ -75,9 +74,6 @@ public class DrawMainWindow extends JFrame implements ActionListener {
         help.setMnemonic('H'); // ALT+H
 
         // File
-        // nf = new ImageIcon("../images/newfile.png");// 创建图标
-        // sf = new ImageIcon("../images/savefile.png");
-        // of = new ImageIcon("../images/openfile.png");
         newfile = new JMenuItem("新建");
         openfile = new JMenuItem("打开");
         savefile = new JMenuItem("保存");
@@ -152,27 +148,27 @@ public class DrawMainWindow extends JFrame implements ActionListener {
                 button[i].addActionListener(this);
         }
 
-        CheckBoxHandler CHandler = new CheckBoxHandler();// 字体样式处理类
-        bold = new JCheckBox("B");
-        bold.setFont(new Font(Font.DIALOG, Font.BOLD, 15));// 设置字体
-        bold.addItemListener(CHandler);
-        italic = new JCheckBox("I");
-        italic.addItemListener(CHandler);// italic注册监听
-        italic.setFont(new Font(Font.DIALOG, Font.ITALIC, 15));// 设置字体
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();// 计算机上字体可用的名称
-        fontName = ge.getAvailableFontFamilyNames();
-        styles = new JComboBox<String>(fontName);// 下拉列表的初始化
-        styles.addItemListener(CHandler);// styles注册监听
-        styles.setMaximumSize(new Dimension(200, 50));// 设置下拉列表的最大尺寸
-        styles.setMinimumSize(new Dimension(100, 40));
-        styles.setFont(new Font(Font.DIALOG, Font.BOLD, 15));// 设置字体
-
+        bold = new JButton("B");
+        bold.setFont(new Font(Font.DIALOG, Font.BOLD, 15));
+        bold.addActionListener(this);
+        italic = new JButton("I");
+        italic.setFont(new Font(Font.DIALOG, Font.ITALIC, 15));
+        italic.addActionListener(this);
+        plain = new JButton("reset");
+        plain.setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
+        plain.addActionListener(this);
+        GraphicsEnvironment g = GraphicsEnvironment.getLocalGraphicsEnvironment();// 字体可用名称
+        fontName = g.getAvailableFontFamilyNames();
+        styles = new JComboBox<String>(fontName);
+        styles.addActionListener(this);
+        styles.setMaximumSize(new Dimension(70, 40));// 下拉最大尺
         // 添加字体式样栏
-        JToolBar fontpanel = new JToolBar("字体选项", JToolBar.HORIZONTAL);// 水平方向
-        fontpanel.setLayout(new GridLayout(1, 3, 0, 0));
+        JToolBar fontpanel = new JToolBar("字体", JToolBar.HORIZONTAL);
+        fontpanel.setLayout(new GridLayout(1, 4, 0, 0));
         fontpanel.setFloatable(false);// 不可浮动
         fontpanel.add(bold);
         fontpanel.add(italic);
+        fontpanel.add(plain);
         fontpanel.add(styles);
 
         // 状态栏的初始化
@@ -190,8 +186,8 @@ public class DrawMainWindow extends JFrame implements ActionListener {
         con.setLayout(null);
         toolPanel.setBounds(0, 0, 130, 1000);// 给各工具栏安排位置
         startbar.setBounds(dim.width - 300, dim.height - 150, 300, 100);
-        canvas.setBounds(130, 0, dim.width - 10, dim.height - 200);
-        fontpanel.setBounds(130, dim.height - 190, 200, 50);
+        canvas.setBounds(130, 0, dim.width - 175, dim.height - 200);
+        fontpanel.setBounds(130, dim.height - 180, 300, 30);
         con.add(toolPanel);// 将各工具栏添加到主面板内
         con.add(canvas);
         con.add(startbar);
@@ -199,6 +195,7 @@ public class DrawMainWindow extends JFrame implements ActionListener {
         con.add(canvas.tarea);
         setBounds(0, 0, dim.width, dim.height);
         setVisible(true);
+        setResizable(false);
         validate();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
@@ -263,30 +260,20 @@ public class DrawMainWindow extends JFrame implements ActionListener {
         } else if (e.getSource() == helpmain) {
             helpwindow.MainHelp();
         }
-    }
-
-    // 字体样式处理类（粗体、斜体、字体名称）
-    public class CheckBoxHandler implements ItemListener {
-
-        public void itemStateChanged(ItemEvent ie) {
-            if (ie.getSource() == bold)// 字体粗体
-            {
-                if (ie.getStateChange() == ItemEvent.SELECTED)
-                    canvas.setFont(1, Font.BOLD);
-                else
-                    canvas.setFont(1, Font.PLAIN);
-            } else if (ie.getSource() == italic)// 字体斜体
-            {
-                if (ie.getStateChange() == ItemEvent.SELECTED)
-                    canvas.setFont(2, Font.ITALIC);
-                else
-                    canvas.setFont(2, Font.PLAIN);
-
-            } else if (ie.getSource() == styles)// 字体的名称
-            {
-                canvas.style = fontName[styles.getSelectedIndex()];
-            }
+        if (e.getSource() == bold) {
+            canvas.setFont(1, Font.BOLD);
+            canvas.createNewitem();
         }
-
+        if (e.getSource() == italic) {
+            canvas.setFont(2, Font.ITALIC);
+            canvas.createNewitem();
+        }
+        if (e.getSource() == plain) {
+            canvas.setFont(3, Font.PLAIN);
+            canvas.createNewitem();
+        }
+        if (e.getSource() == styles) {
+            canvas.style = fontName[styles.getSelectedIndex()];
+        }
     }
 }

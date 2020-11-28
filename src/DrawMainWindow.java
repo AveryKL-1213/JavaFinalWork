@@ -32,6 +32,7 @@ public class DrawMainWindow extends JFrame implements ActionListener {
     private Canvas canvas;// 画布类的定义
     private HelpWindow helpwindow; // 定义一个帮助类对象
     private FileManage filemanage;// 文件对象
+    private boolean flag = false;
     String[] fontName;// 字体名称
 
     private String names[] = { "newfile", "openfile", "savefile", "pen", "line", "rect", "frect", "oval", "foval",
@@ -209,8 +210,15 @@ public class DrawMainWindow extends JFrame implements ActionListener {
 
     // 事件的处理
     public void actionPerformed(ActionEvent e) {
+        if (flag) {
+            canvas.colorBar(0, 0, 0);
+            canvas.setStroke(1);
+            flag = false;
+        }
         for (int i = 3; i <= 14; i++) {// 图形工具
             if (e.getSource() == button[i]) {
+                if (i == 13)
+                    flag = true;
                 canvas.setChosenStatus(i);
                 canvas.createNewitem();
                 canvas.repaint();
@@ -219,6 +227,7 @@ public class DrawMainWindow extends JFrame implements ActionListener {
         if (e.getSource() == button[15] || e.getSource() == strokeitem) { // 画笔粗细的调整
             canvas.setStroke();
         } else if (e.getSource() == button[16]) { // 橡皮擦
+            flag = true;
             canvas.setChosenStatus(22);
             canvas.createNewitem();
             canvas.repaint();

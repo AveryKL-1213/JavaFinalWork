@@ -19,7 +19,7 @@ public class Canvas extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    DrawMainWindow drawpad = null;
+    DrawMainWindow drawanyway = null;
     DrawGraph[] itemList = new DrawGraph[5000];// 绘制图形及相关参数全部存到该数组
 
     int chooseni = 0;// 当前选中图形的数组下标
@@ -35,7 +35,7 @@ public class Canvas extends JPanel {
     int tx, ty;
 
     Canvas(DrawMainWindow dp) {
-        drawpad = dp;
+        drawanyway = dp;
         setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         // 把鼠标设置成十字形
         setBackground(Color.white);// 设置绘制区的背景是白色
@@ -97,20 +97,27 @@ public class Canvas extends JPanel {
                 itemList[index] = new fillRoundRect();
                 break;
             case 13:
-                // 画刷
+                stroke = (float) 50;
+                itemList[index] = new Pencil();
                 break;
             case 14:
                 itemList[index] = new Word();
                 break;
+            case 22:
+                R = 255;
+                G = 255;
+                B = 255;
+                stroke = (float) 50;
+                itemList[index] = new Pencil();
+                break;
         }
-        if (chosenStatus >= 3 && chosenStatus <= 14) {
+        if (chosenStatus >= 3 && chosenStatus <= 14 || chosenStatus == 22) {
             itemList[index].type = chosenStatus;
             itemList[index].R = R;
             itemList[index].G = G;
             itemList[index].B = B;
             itemList[index].stroke = stroke;
         }
-
     }
 
     public void setIndex(int x) {// 设置index的接口
@@ -133,7 +140,7 @@ public class Canvas extends JPanel {
 
     public void chooseColor()// 选择当前颜色
     {
-        color = JColorChooser.showDialog(drawpad, "请选择颜色", color);
+        color = JColorChooser.showDialog(drawanyway, "请选择颜色", color);
         try {
             R = color.getRed();
             G = color.getGreen();
@@ -159,7 +166,7 @@ public class Canvas extends JPanel {
 
     public void changeColor()// 改变当前图片的颜色
     {
-        color = JColorChooser.showDialog(drawpad, "请选择颜色", color);
+        color = JColorChooser.showDialog(drawanyway, "请选择颜色", color);
         try {
             R = color.getRed();
             G = color.getGreen();
@@ -251,7 +258,7 @@ public class Canvas extends JPanel {
 
     public void deletePaint(DrawGraph nowdrawing) {// 删除
         int choice = nowdrawing.gettypechoice();
-        if (choice >= 3 && choice <= 14) {
+        if (choice >= 3 && choice <= 14 || chosenStatus == 22) {
             itemList[chooseni] = new Line();
         }
     }
@@ -260,17 +267,17 @@ public class Canvas extends JPanel {
     class MouseA extends MouseAdapter {
         public void mouseEntered(MouseEvent me) {
             // 鼠标进入
-            drawpad.setStratBar("鼠标进入在：[" + me.getX() + " ," + me.getY() + "]");// 设置状态栏提示
+            drawanyway.setStratBar("鼠标进入在：[" + me.getX() + " ," + me.getY() + "]");// 设置状态栏提示
         }
 
         public void mouseExited(MouseEvent me) {
             // 鼠标退出
-            drawpad.setStratBar("鼠标退出在：[" + me.getX() + " ," + me.getY() + "]");
+            drawanyway.setStratBar("鼠标退出在：[" + me.getX() + " ," + me.getY() + "]");
         }
 
         public void mousePressed(MouseEvent me) {
             // 鼠标按下
-            drawpad.setStratBar("鼠标按下在：[" + me.getX() + " ," + me.getY() + "]");
+            drawanyway.setStratBar("鼠标按下在：[" + me.getX() + " ," + me.getY() + "]");
             if (chosenStatus >= 15 && chosenStatus <= 21)
             // 删除，移动，更改大小，更改颜色，更改线型，填充六种操作都需要选定图形
             {
@@ -310,7 +317,7 @@ public class Canvas extends JPanel {
                 itemList[index].x1 = itemList[index].x2 = me.getX();
                 itemList[index].y1 = itemList[index].y2 = me.getY();// x1,x2,y1,y2初始化
                 // 如果当前选择为随笔画则进行下面的操作
-                if (chosenStatus == 3) {
+                if (chosenStatus == 3 || chosenStatus == 13 || chosenStatus == 22) {
                     itemList[index].x1 = itemList[index].x2 = me.getX();
                     itemList[index].y1 = itemList[index].y2 = me.getY();
                     index++;
@@ -328,7 +335,7 @@ public class Canvas extends JPanel {
 
         public void mouseReleased(MouseEvent me) {
             // 鼠标松开
-            drawpad.setStratBar("鼠标松开在：[" + me.getX() + " ," + me.getY() + "]");
+            drawanyway.setStratBar("鼠标松开在：[" + me.getX() + " ," + me.getY() + "]");
             if (chosenStatus == 16) {// 移动结束
 
                 if (chooseni >= 0) {// 鼠标成功选择了某个图形
@@ -347,7 +354,7 @@ public class Canvas extends JPanel {
                     setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                 }
             } else {
-                if (chosenStatus == 3) {// 随笔画绘制结束
+                if (chosenStatus == 3 || chosenStatus == 13 || chosenStatus == 22) {// 随笔画绘制结束
                     itemList[index].x1 = me.getX();
                     itemList[index].y1 = me.getY();
                 } else if (chosenStatus == 14) {// 文本框绘制结束
@@ -369,7 +376,7 @@ public class Canvas extends JPanel {
                     tarea.setText("");// 重设文本框，为下一次使用做准备
                     tarea.setBounds(tx, ty, 0, 0);
                 }
-                if (chosenStatus >= 3 && chosenStatus <= 12) {
+                if (chosenStatus >= 3 && chosenStatus <= 13 || chosenStatus == 22) {
                     itemList[index].x2 = me.getX();
                     itemList[index].y2 = me.getY();
                     repaint();
@@ -384,8 +391,8 @@ public class Canvas extends JPanel {
     class MouseB extends MouseMotionAdapter {
         public void mouseDragged(MouseEvent me)// 鼠标的拖动
         {
-            drawpad.setStratBar("鼠标拖动在：[" + me.getX() + " ," + me.getY() + "]");
-            if (chosenStatus == 3) {// 任意线的画法
+            drawanyway.setStratBar("鼠标拖动在：[" + me.getX() + " ," + me.getY() + "]");
+            if (chosenStatus == 3 || chosenStatus == 13 || chosenStatus == 22) {// 任意线的画法
                 itemList[index - 1].x1 = itemList[index].x2 = itemList[index].x1 = me.getX();
                 itemList[index - 1].y1 = itemList[index].y2 = itemList[index].y1 = me.getY();
                 index++;
@@ -407,7 +414,7 @@ public class Canvas extends JPanel {
                     itemList[chooseni].y2 = me.getY();
                     repaint();
                 }
-            } else if (chosenStatus >= 3 && chosenStatus <= 14) {// 绘制图形的过程
+            } else if (chosenStatus >= 3 && chosenStatus <= 14 || chosenStatus == 22) {// 绘制图形的过程
                 itemList[index].x2 = me.getX();
                 itemList[index].y2 = me.getY();
                 repaint();
@@ -417,7 +424,7 @@ public class Canvas extends JPanel {
 
         public void mouseMoved(MouseEvent me)// 鼠标的移动
         {
-            drawpad.setStratBar("鼠标移动在：[" + me.getX() + " ," + me.getY() + "]");
+            drawanyway.setStratBar("鼠标移动在：[" + me.getX() + " ," + me.getY() + "]");
             for (chooseni = index - 1; chooseni >= 0; chooseni--) {
                 // 从后到前寻找当前鼠标是否在某个图形内部
                 if (itemList[chooseni].in(me.getX(), me.getY())) {

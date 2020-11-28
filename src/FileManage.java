@@ -31,11 +31,6 @@ public class FileManage {
         // JFileChooser 为用户选择文件提供了一种简单的机制
         JFileChooser filechooser = new JFileChooser();
         filechooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        /*
-         * FileNameExtensionFilter filter = new FileNameExtensionFilter(
-         * "JPG & GIF Images", "jpg", "gif");//其中只显示 .jpg 和 .gif 图像
-         * filechooser.setFileFilter(filter);
-         */
         int returnVal = filechooser.showOpenDialog(drawpad);
 
         if (returnVal == JFileChooser.CANCEL_OPTION) {// 如果单击确定按钮就执行下面得程序
@@ -45,7 +40,7 @@ public class FileManage {
         fileName.canRead();
         if (fileName == null || fileName.getName().equals(""))// 文件名不存在时
         {
-            JOptionPane.showMessageDialog(filechooser, "文件名", "请输入文件名！", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(filechooser, "", "请输入文件名！", JOptionPane.ERROR_MESSAGE);
         } else {
 
             try {
@@ -95,7 +90,7 @@ public class FileManage {
         } else {
             try {
                 fileName.delete();// 删除此抽象路径名表示的文件或目录
-                FileOutputStream fos = new FileOutputStream(fileName + ".xxh");// 文件输出流以字节的方式输出
+                FileOutputStream fos = new FileOutputStream(fileName + ".cr");// 文件输出流以字节的方式输出
                 // 对象输出流
                 ObjectOutputStream output = new ObjectOutputStream(fos);
                 // Drawing record;

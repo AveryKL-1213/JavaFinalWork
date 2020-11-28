@@ -35,14 +35,11 @@ public class DrawMainWindow extends JFrame implements ActionListener {
     String[] fontName;// 字体名称
 
     private String names[] = { "newfile", "openfile", "savefile", "pen", "line", "rect", "frect", "oval", "foval",
-            "circle", "fcircle", "roundrect", "froundrect", "brush", "txt", "stroke", "delete", "move", "fill", "clear",
-            "color" };// 定义工具栏图标的名称
-
+            "circle", "fcircle", "roundrect", "froundrect", "brush", "txt", "stroke", "eraser", "delete", "move",
+            "fill", "clear", "color" };// 图标文件名
+    private String tiptext[] = { "新建画布", "打开画布", "保存画布", "铅笔", "直线", "矩形", "填充矩形", "椭圆", "填充椭圆", "圆", "填充圆", "圆角矩形",
+            "填充圆角矩形", "画刷", "文字的输入", "线条的粗细", "橡皮擦", "删除图形", "移动图形", "填充图形", "清空", "颜色" };// 工具功能提示提示
     private Icon icons[];// 定义按钮图标数组
-
-    private String tiptext[] = { // 这里是鼠标移到相应的按钮上给出相应的提示
-            "新建画布", "打开画布", "保存画布", "铅笔", "直线", "矩形", "填充矩形", "椭圆", "填充椭圆", "圆", "填充圆", "圆角矩形", "填充圆角矩形", "画刷", "文字的输入",
-            "选择线条的粗细", "删除图形", "移动图形", "填充图形", "清空", "颜色" };
 
     JButton button[];// 定义工具条中的按钮组
     private JCheckBox bold, italic;// 工具条字体的风格（复选框）
@@ -179,7 +176,7 @@ public class DrawMainWindow extends JFrame implements ActionListener {
 
         // 状态栏的初始化
         startbar = new JLabel("DrawAnyway");
-        button[20].addActionListener(e -> canvas.chooseColor());
+        button[21].addActionListener(e -> canvas.chooseColor());
 
         // 绘画区的初始化
         canvas = new Canvas(this);
@@ -219,39 +216,43 @@ public class DrawMainWindow extends JFrame implements ActionListener {
                 canvas.repaint();
             }
         }
-        if (e.getSource() == button[15] || e.getSource() == strokeitem) {
-            canvas.setStroke();// 画笔粗细的调整
-        } else if (e.getSource() == button[16]) {
-            canvas.setChosenStatus(15);// 删除一个图形
-        } else if (e.getSource() == button[17]) {
-            canvas.setChosenStatus(16);// 拖动图形
-        } else if (e.getSource() == editgraph) {
-            canvas.setChosenStatus(17);// 改变已有图形大小
-        } else if (e.getSource() == editcolor) {
-            canvas.setChosenStatus(18);// 改变已有图形颜色
-        } else if (e.getSource() == editstroke) {
-            canvas.setChosenStatus(19);// 改变已有图形线型
-        } else if (e.getSource() == button[18]) {
-            canvas.setChosenStatus(20);// 填充图片
-        } else if (e.getSource() == edittext) {
-            canvas.setChosenStatus(21);// 编辑已输入的文字
-        } else if (e.getSource() == button[19]) {
-            filemanage.newFile();// 清空
+        if (e.getSource() == button[15] || e.getSource() == strokeitem) { // 画笔粗细的调整
+            canvas.setStroke();
+        } else if (e.getSource() == button[16]) { // 橡皮擦
+            canvas.setChosenStatus(22);
+            canvas.createNewitem();
+            canvas.repaint();
+        } else if (e.getSource() == button[17]) { // 删除一个图形
+            canvas.setChosenStatus(15);
+        } else if (e.getSource() == button[18]) { // 拖动图形
+            canvas.setChosenStatus(16);
+        } else if (e.getSource() == editgraph) { // 改变已有图形大小
+            canvas.setChosenStatus(17);
+        } else if (e.getSource() == editcolor) { // 改变已有图形颜色
+            canvas.setChosenStatus(18);
+        } else if (e.getSource() == editstroke) { // 改变已有图形线型
+            canvas.setChosenStatus(19);
+        } else if (e.getSource() == button[19]) { // 填充图片
+            canvas.setChosenStatus(20);
+        } else if (e.getSource() == edittext) { // 编辑已输入的文字
+            canvas.setChosenStatus(21);
+        } else if (e.getSource() == button[20]) { // 清空
+            filemanage.newFile();
         } else if (e.getSource() == newfile || e.getSource() == button[0]) {
-            filemanage.saveFile();// 保存
-            filemanage.newFile();// 新建
+            filemanage.saveFile(); // 保存
+            filemanage.newFile(); // 新建
         } else if (e.getSource() == openfile || e.getSource() == button[1]) {
-            filemanage.openFile();// 打开
+            filemanage.openFile(); // 打开
         } else if (e.getSource() == savefile || e.getSource() == button[2]) {
-            filemanage.saveFile();// 保存
-        } else if (e.getSource() == exit) {
-            System.exit(0);// 退出程序
-        } else if (e.getSource() == colorchoice) {
-            canvas.chooseColor();// 颜色的选择
-        } else if (e.getSource() == helpin) {
-            helpwindow.AboutBook();// 帮助信息
+            filemanage.saveFile(); // 保存
+        } else if (e.getSource() == exit) { // 退出
+            System.exit(0);
+        } else if (e.getSource() == colorchoice) { // 选择颜色
+            canvas.chooseColor();
+        } else if (e.getSource() == helpin) { // 帮助
+            helpwindow.AboutBook();
         } else if (e.getSource() == helpmain) {
-            helpwindow.MainHelp();// 帮助主题
+            helpwindow.MainHelp();
         }
     }
 

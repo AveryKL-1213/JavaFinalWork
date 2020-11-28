@@ -267,17 +267,15 @@ public class Canvas extends JPanel {
     class MouseA extends MouseAdapter {
         public void mouseEntered(MouseEvent me) {
             // 鼠标进入
-            drawanyway.setStratBar("鼠标进入在：[" + me.getX() + " ," + me.getY() + "]");// 设置状态栏提示
+            drawanyway.setStratBar("(" + me.getX() + " ," + me.getY() + ")");// 设置状态栏提示
         }
-
         public void mouseExited(MouseEvent me) {
             // 鼠标退出
-            drawanyway.setStratBar("鼠标退出在：[" + me.getX() + " ," + me.getY() + "]");
+            drawanyway.setStratBar("(" + me.getX() + " ," + me.getY() + ")");
         }
-
         public void mousePressed(MouseEvent me) {
             // 鼠标按下
-            drawanyway.setStratBar("鼠标按下在：[" + me.getX() + " ," + me.getY() + "]");
+            drawanyway.setStratBar("(" + me.getX() + " ," + me.getY() + ")");
             if (chosenStatus >= 15 && chosenStatus <= 21)
             // 删除，移动，更改大小，更改颜色，更改线型，填充六种操作都需要选定图形
             {

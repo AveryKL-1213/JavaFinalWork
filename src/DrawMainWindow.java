@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,20 +20,6 @@ public class DrawMainWindow extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = 1L;
 
-    private JToolBar toolPanel;// 工具面板
-    private JMenuBar bar;// 菜单栏
-    private JMenu file, color, stroke, help, edit;// 菜单
-    private JMenuItem newfile, openfile, savefile, exit;// file菜单
-    private JMenuItem editgraph, editcolor, editstroke, edittext;// edit菜单
-    private JMenuItem helpin, helpmain, colorchoice, strokeitem;// help菜单
-    // private Icon nf, sf, of;// 文件菜单项的图标对象
-    private JLabel startbar;// 状态栏
-    private Canvas canvas;// 画布类的定义
-    private HelpWindow helpwindow; // 定义一个帮助类对象
-    private FileManage filemanage;// 文件对象
-    private boolean flag = false;
-    String[] fontName;// 字体名称
-
     private String names[] = { "newfile", "openfile", "savefile", "pen", "line", "rect", "frect", "oval", "foval",
             "circle", "fcircle", "roundrect", "froundrect", "brush", "txt", "stroke", "eraser", "delete", "move",
             "fill", "clear", "color" };// 图标文件名
@@ -40,37 +27,46 @@ public class DrawMainWindow extends JFrame implements ActionListener {
             "填充圆角矩形", "画刷", "文字的输入", "线条的粗细", "橡皮擦", "删除图形", "移动图形", "填充图形", "清空", "颜色" };// 工具功能提示提示
     private Icon icons[];// 定义按钮图标数组
 
-    JButton button[];// 定义工具条中的按钮组
-    // private JCheckBox bold, italic;// 工具条字体的风格（复选框）
-    private JButton bold, italic, plain;// 工具条字体的风格（复选框）
-    private JComboBox<String> styles;// 工具条中的字体的样式（下拉列表）
+    private Canvas canvas; // 画布
+    private HelpWindow helpwindow; // 帮助
+    private FileManage filemanage; // 文件
 
+    private JToolBar toolPanel; // 工具面板
+    private JMenuBar bar; // 菜单栏
+    private JMenu file, color, stroke, help, edit; // 菜单
+    private JMenuItem newfile, openfile, savefile, exit; // file菜单
+    private JMenuItem editgraph, editcolor, editstroke, edittext; // edit菜单
+    private JMenuItem helpin, helpmain, colorchoice, strokeitem; // help菜单
+    private JLabel startbar; // 状态栏
+    private boolean flag = false;
+    String[] fontName; // 字体名称
+    JButton button[]; // 工具条栏按钮
+    private JButton bold, italic, plain; // 字体设置
+    private JComboBox<String> styles;
+
+    // 主界面构造函数
     DrawMainWindow(String string) {
-        // 主界面构造函数
         super(string);
+        Image icon = Toolkit.getDefaultToolkit().getImage("../images/logo.png");
+        this.setIconImage(icon);
         // 菜单初始化
         file = new JMenu("文件");
         edit = new JMenu("编辑");
         color = new JMenu("颜色");
         stroke = new JMenu("画笔");
         help = new JMenu("帮助");
-
-        // 菜单栏初始化
         bar = new JMenuBar();
-        bar.add(file);// 菜单条添加菜单
+        bar.add(file);
         bar.add(edit);
         bar.add(color);
         bar.add(stroke);
         bar.add(help);
-
-        // 显示菜单栏
-        setJMenuBar(bar);
-
+        setJMenuBar(bar); // 显示菜单栏
         // 快捷键
         file.setMnemonic('F'); // ALT+F
         edit.setMnemonic('E'); // ALT+E
         color.setMnemonic('C'); // ALT+C
-        stroke.setMnemonic('S'); // ALT+S
+        stroke.setMnemonic('P'); // ALT+P
         help.setMnemonic('H'); // ALT+H
 
         // File
@@ -181,8 +177,8 @@ public class DrawMainWindow extends JFrame implements ActionListener {
         filemanage = new FileManage(this, canvas);
 
         Container con = getContentPane();// 得到内容面板
-        Toolkit tool = getToolkit();// 得到一个Toolkit类的对象（主要用于得到屏幕的大小）
-        Dimension dim = tool.getScreenSize();// 得到屏幕的大小 （返回Dimension对象）
+        Toolkit tool = getToolkit();
+        Dimension dim = tool.getScreenSize();// 获得屏幕大小
         con.setLayout(null);
         toolPanel.setBounds(0, 0, 130, 1000);// 给各工具栏安排位置
         startbar.setBounds(dim.width - 300, dim.height - 150, 300, 100);

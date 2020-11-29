@@ -10,8 +10,8 @@ public class HelpWindow extends JFrame {
 
     private DrawMainWindow drawanyway = null;
 
-    HelpWindow(DrawMainWindow dp) {
-        drawanyway = dp;
+    HelpWindow(DrawMainWindow mainwindow) {
+        drawanyway = mainwindow;
     }
 
     public void HelpDocDialog() {

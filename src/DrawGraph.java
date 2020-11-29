@@ -53,7 +53,7 @@ class Pencil extends DrawGraph {
 }
 
 // 文本框
-class Word extends DrawGraph {
+class Txt extends DrawGraph {
 
     private static final long serialVersionUID = 1L;
 

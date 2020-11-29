@@ -27,7 +27,7 @@ public class Canvas extends JPanel {
     private static final long serialVersionUID = 1L;
 
     DrawMainWindow drawanyway = null;
-    DrawGraph[] canvasList = new DrawGraph[3000]; // 储存画布
+    DrawGraph[] canvasList = new DrawGraph[10000]; // 储存画布
 
     int selectPID = 0; // 选中图形下标
     int index = 0; // 图形数量标识
@@ -114,7 +114,7 @@ public class Canvas extends JPanel {
                 canvasList[index] = new Pencil();
                 break;
             case 14: // 文字输入
-                canvasList[index] = new Word();
+                canvasList[index] = new Txt();
                 break;
             case 22: // 橡皮擦
                 R = 255;

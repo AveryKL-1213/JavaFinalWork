@@ -30,9 +30,9 @@ public class Canvas extends JPanel {
     DrawGraph[] canvasList = new DrawGraph[3000]; // 储存画布
 
     int selectPID = 0; // 选中图形下标
-    int x0, y0; // 记录移动图形鼠标起始位置
-    private int toolStatus = 3; // 设置默认基本图形状态为随笔画
-    int index = 0; // 当前已经绘制的图形数目
+    int index = 0; // 图形数量标识
+    int x0, y0; // 记录鼠标起始位置
+    private int toolStatus = 3; // 默认tool为铅笔
     private Color color = Color.black; // 当前画笔颜色
     int R, G, B; // 颜色RGB值
     int fontBold, fontItalic; // 当前字体加粗/斜体
@@ -368,7 +368,8 @@ public class Canvas extends JPanel {
                     setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                 }
             } else {
-                if (toolStatus == 3 || toolStatus == 13 || toolStatus == 22) {// 随笔画绘制结束
+                // 铅笔绘制结束
+                if (toolStatus == 3 || toolStatus == 13 || toolStatus == 22) {
                     canvasList[index].x1 = me.getX();
                     canvasList[index].y1 = me.getY();
                 } else if (toolStatus == 14) {// 文本框绘制结束
@@ -385,7 +386,7 @@ public class Canvas extends JPanel {
 
                     index++;
                     toolStatus = 14;
-                    drawItem();// 创建新的图形的基本单元对象
+                    drawItem();
                     repaint();
                     textArea.setText("");// 重设文本框，为下一次使用做准备
                     textArea.setBounds(textX, textY, 0, 0);
@@ -395,22 +396,22 @@ public class Canvas extends JPanel {
                     canvasList[index].y2 = me.getY();
                     repaint();
                     index++;
-                    drawItem();// 创建新的图形的基本单元对象
+                    drawItem();
                 }
             }
         }
     }
 
-    // 鼠标事件MouseB继承了MouseMotionAdapter，用来处理鼠标的滚动与拖动
+    // 鼠标事件 处理鼠标的滚动与拖动
     class MouseB extends MouseMotionAdapter {
         public void mouseDragged(MouseEvent me)// 鼠标的拖动
         {
             drawanyway.setStatusBarText("(" + me.getX() + " ," + me.getY() + ")");
-            if (toolStatus == 3 || toolStatus == 13 || toolStatus == 22) {// 任意线的画法
+            if (toolStatus == 3 || toolStatus == 13 || toolStatus == 22) {// 铅笔线条绘制
                 canvasList[index - 1].x1 = canvasList[index].x2 = canvasList[index].x1 = me.getX();
                 canvasList[index - 1].y1 = canvasList[index].y2 = canvasList[index].y1 = me.getY();
                 index++;
-                drawItem();// 创建新的图形的基本单元对象
+                drawItem();
                 repaint();
             } else if (toolStatus == 17) {
                 if (selectPID >= 0) {// 移动的过程
@@ -441,11 +442,11 @@ public class Canvas extends JPanel {
             for (selectPID = index - 1; selectPID >= 0; selectPID--) {
                 // 从后到前寻找当前鼠标是否在某个图形内部
                 if (canvasList[selectPID].isInGraph(me.getX(), me.getY())) {
-                    break;// 其它操作只需找到currenti即可
+                    break;
                 }
             }
-            if (selectPID >= 0) {// 有图形被选中
-                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));// 更改鼠标样式为箭头
+            if (selectPID >= 0) {// 有图形被选中，更改鼠标样式
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             } else {
                 setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
             }
@@ -454,12 +455,13 @@ public class Canvas extends JPanel {
 
 }
 
+// 设置线条粗细的滑块弹窗
 class StrokeSlider extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = 1L;
-    JFrame jf;
-    JButton confirmButton;
-    static private int weight;
+    JFrame jf; // 窗体
+    JButton confirmButton; // 确认按钮
+    static private int weight; // 存储滑块数据
 
     public StrokeSlider() {
         jf = new JFrame("Set Stroke Weight");
@@ -470,22 +472,22 @@ class StrokeSlider extends JFrame implements ActionListener {
         jf.setResizable(false);
         jf.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         JPanel panel = new JPanel();
-        // 创建一个滑块，最小值、最大值、初始值 分别为 0、20、10
+        // 创建一个滑块，最小值、最大值、初始值
         final JSlider slider = new JSlider(0, 100, (int) Canvas.getStrokeWeight());
         // 设置主刻度间隔
         slider.setMajorTickSpacing(10);
         // 设置次刻度间隔
         slider.setMinorTickSpacing(1);
-        // 绘制 刻度 和 标签
+        // 绘制刻度和标签
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
-        // 添加刻度改变监听器
+        // 添加监听器
         slider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 weight = slider.getValue();
             }
         });
-
+        // 确认按钮
         confirmButton = new JButton("Confirm");
         confirmButton.setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
         confirmButton.addActionListener(this);

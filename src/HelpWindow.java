@@ -21,6 +21,6 @@ public class HelpWindow extends JFrame {
 
     public void AboutDialog() {
         JOptionPane.showMessageDialog(drawanyway, "DrawAnyway\n" + "Version: 1.1\n" + "Authors:    " + "程睿 \n"
-                + "                  王有为\n" + "                  董修良", "DrawAnyway", JOptionPane.INFORMATION_MESSAGE);
+                + "                王有为\n" + "                董修良", "DrawAnyway", JOptionPane.INFORMATION_MESSAGE);
     }
 }

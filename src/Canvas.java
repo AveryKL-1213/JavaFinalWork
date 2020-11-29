@@ -3,6 +3,8 @@ package JavaFinalWork.src;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Cursor;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
@@ -461,6 +463,8 @@ class StrokeSlider extends JFrame implements ActionListener {
 
     public StrokeSlider() {
         jf = new JFrame("Set Stroke Weight");
+        Image icon = Toolkit.getDefaultToolkit().getImage("../images/logo.png");
+        jf.setIconImage(icon);
         jf.setSize(300, 130);
         jf.setLocationRelativeTo(null);
         jf.setResizable(false);
@@ -483,7 +487,7 @@ class StrokeSlider extends JFrame implements ActionListener {
         });
 
         confirmButton = new JButton("Confirm");
-        confirmButton.setFont(new Font(Font.DIALOG, Font.BOLD, 15));
+        confirmButton.setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
         confirmButton.addActionListener(this);
         panel.add(slider);
         panel.add(confirmButton);

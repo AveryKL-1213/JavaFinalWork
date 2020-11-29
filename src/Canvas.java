@@ -464,7 +464,7 @@ class StrokeSlider extends JFrame implements ActionListener {
         jf.setSize(300, 130);
         jf.setLocationRelativeTo(null);
         jf.setResizable(false);
-        jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        jf.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         JPanel panel = new JPanel();
         // 创建一个滑块，最小值、最大值、初始值 分别为 0、20、10
         final JSlider slider = new JSlider(0, 100, (int) Canvas.getStrokeWeight());

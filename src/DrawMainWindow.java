@@ -21,8 +21,8 @@ public class DrawMainWindow extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = 1L;
 
-    private String logonames[] = { "newfile", "openfile", "savefile", "pen", "line", "rect", "frect", "oval", "foval",
-            "circle", "fcircle", "roundrect", "froundrect", "brush", "txt", "stroke", "eraser", "delete", "move",
+    private String logonames[] = { "newfile", "openfile", "savefile", "pen", "line", "rectangle", "filledrectangle", "ellipse", "filledellipse",
+            "circle", "filledcircle", "roundrectangle", "filledroundrectangle", "brush", "txt", "stroke", "eraser", "delete", "move",
             "fill", "clear", "color" };// 图标文件名
     private String tooltips[] = { "New Canvas", "Open Canvas", "Save Canvas", "Pencil", "Line", "Rectangle",
             "Filled Rectangle", "Ellipse", "Filled Ellipse", "Circle", "Filled Circle", "Round Rectangle",
@@ -48,8 +48,20 @@ public class DrawMainWindow extends JFrame implements ActionListener {
 
     // 主界面
     DrawMainWindow(String string) {
-        // 设置窗口标题、图标
+        // 设置窗口标题、图标、风格
         super(string);
+        String lookAndFeel = UIManager.getSystemLookAndFeelClassName();
+        try {
+            UIManager.setLookAndFeel(lookAndFeel);
+        } catch (ClassNotFoundException e1) {
+            e1.printStackTrace();
+        } catch (InstantiationException e1) {
+            e1.printStackTrace();
+        } catch (IllegalAccessException e1) {
+            e1.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e1) {
+            e1.printStackTrace();
+        }
         Image icon = Toolkit.getDefaultToolkit().getImage("../images/logo.png");
         this.setIconImage(icon);
         // 菜单初始化

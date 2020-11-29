@@ -6,9 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.io.Serializable;
 
-//图形绘制类 用于绘制各种图形
-//父类，基本图形单元，用到串行的接口，保存使用到
-//公共的属性放到超类中，子类可以避免重复定义
+// 绘图类
 public class DrawGraph implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -19,7 +17,7 @@ public class DrawGraph implements Serializable {
     int type; // 定义字体属性
     String s1; // 定义字体的风格
     String s2; // 定义字体的风格
-    int typechoice;// 记录图形属性，与currentchoice相匹配
+    int typechoice; // 记录图形属性，与currentchoice相匹配
 
     int gettypechoice() {
         return typechoice;
@@ -69,7 +67,7 @@ class Line extends DrawGraph// 直线类
     }
 }
 
-class Rect extends DrawGraph {// 矩形类
+class Rectangle extends DrawGraph {// 矩形类
 
     private static final long serialVersionUID = 1L;
 
@@ -93,7 +91,7 @@ class Rect extends DrawGraph {// 矩形类
     }
 }
 
-class fillRect extends DrawGraph {// 实心矩形类
+class filledRectangle extends DrawGraph {// 实心矩形类
 
     private static final long serialVersionUID = 1L;
 
@@ -117,7 +115,7 @@ class fillRect extends DrawGraph {// 实心矩形类
     }
 }
 
-class Oval extends DrawGraph {// 椭圆类
+class Ellipse extends DrawGraph {// 椭圆类
 
     private static final long serialVersionUID = 1L;
 
@@ -144,7 +142,7 @@ class Oval extends DrawGraph {// 椭圆类
     }
 }
 
-class fillOval extends DrawGraph {// 实心椭圆类
+class filledEllipse extends DrawGraph {// 实心椭圆类
 
     private static final long serialVersionUID = 1L;
 
@@ -201,7 +199,7 @@ class Circle extends DrawGraph {// 圆形类
     }
 }
 
-class fillCircle extends DrawGraph {// 实心圆类
+class filledCircle extends DrawGraph {// 实心圆类
 
     private static final long serialVersionUID = 1L;
 
@@ -230,7 +228,7 @@ class fillCircle extends DrawGraph {// 实心圆类
     }
 }
 
-class RoundRect extends DrawGraph {// 圆角矩形类
+class RoundRectangle extends DrawGraph {// 圆角矩形类
 
     private static final long serialVersionUID = 1L;
 
@@ -255,7 +253,7 @@ class RoundRect extends DrawGraph {// 圆角矩形类
 
 }
 
-class fillRoundRect extends DrawGraph {// 实心圆角矩形类
+class filledRoundRectangle extends DrawGraph {// 实心圆角矩形类
 
     private static final long serialVersionUID = 1L;
 

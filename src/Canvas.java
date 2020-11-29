@@ -7,140 +7,143 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
-//绘图区类（各种图形的绘制和鼠标事件）
+// 画布
 public class Canvas extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
     DrawMainWindow drawanyway = null;
-    DrawGraph[] itemList = new DrawGraph[5000];// 绘制图形及相关参数全部存到该数组
+    DrawGraph[] canvasList = new DrawGraph[5000]; // 储存画布
 
-    int chooseni = 0;// 当前选中图形的数组下标
-    int x0, y0;// 记录移动图形鼠标起始位置
-    private int chosenStatus = 3;// 设置默认基本图形状态为随笔画
-    int index = 0;// 当前已经绘制的图形数目
-    private Color color = Color.black;// 当前画笔的颜色
-    int R, G, B;// 用来存放当前颜色的彩值
-    int f1, f2;// 用来存放当前字体的风格
-    String style;// 存放当前字体
-    float stroke = 1.0f;// 设置画笔的粗细 ，默认的是 1.0
-    JTextArea tarea = new JTextArea("");
-    int tx, ty;
+    int selectPID = 0; // 选中图形下标
+    int x0, y0; // 记录移动图形鼠标起始位置
+    private int toolStatus = 3; // 设置默认基本图形状态为随笔画
+    int index = 0; // 当前已经绘制的图形数目
+    private Color color = Color.black; // 当前画笔颜色
+    int R, G, B; // 颜色RGB值
+    int fontBold, fontItalic; // 当前字体加粗/斜体
+    String style; // 当前字体
+    static float penStroke = 1.0f; // 画笔粗细
+    JTextArea textArea = new JTextArea("");
+    int textX, textY;
 
-    Canvas(DrawMainWindow dp) {
-        drawanyway = dp;
-        setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-        // 把鼠标设置成十字形
-        setBackground(Color.white);// 设置绘制区的背景是白色
-        addMouseListener(new MouseA());// 添加鼠标事件
+    Canvas(DrawMainWindow mainWindow) {
+        drawanyway = mainWindow;
+        setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR)); // 设置鼠标为十字
+        setBackground(Color.white); // 设置画布背景为白色
+        // 添加鼠标事件
+        addMouseListener(new MouseA());
         addMouseMotionListener(new MouseB());
-        createNewitem();
+        drawItem();
     }
 
-    public void paintComponent(Graphics g) {// repaint()需要调用
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
+    // 返回当前画笔颜色
+    public Color getPenColor() {
+        return color;
+    }
+
+    public void paintComponent(Graphics G) {
+        super.paintComponent(G);
+        Graphics2D G2D = (Graphics2D) G;
         int j = 0;
         while (j <= index) {
-            draw(g2d, itemList[j]);
+            setPen(G2D, canvasList[j]);
             j++;
-        } // 将itemList数组重画一遍
+        }
     }
 
-    void draw(Graphics2D g2d, DrawGraph i) {
-        i.draw(g2d);// 将画笔传到个各类的子类中
+    void setPen(Graphics2D G2D, DrawGraph i) {
+        i.draw(G2D);
     }
 
-    // 新建一个图形的基本单元对象的程序段
-    void createNewitem() {
-        if (chosenStatus == 14)// 字体的输入光标相应的设置为文本输入格式
+    // 绘制图形的基本单元对象
+    void drawItem() {
+        // 根据当前功能，设置光标样式
+        if (toolStatus == 14)
             setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
         else
             setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-
-        switch (chosenStatus) {// button触发改变currentChoice的值，由此得到各事件的入口
-            case 3:
-                itemList[index] = new Pencil();
+        // 根据当前选择的功能，调用对应绘制函数
+        switch (toolStatus) {
+            case 3: // 铅笔
+                canvasList[index] = new Pencil();
                 break;
-            case 4:
-                itemList[index] = new Line();
+            case 4: // 直线
+                canvasList[index] = new Line();
                 break;
-            case 5:
-                itemList[index] = new Rect();
+            case 5: // 矩形
+                canvasList[index] = new Rectangle();
                 break;
-            case 6:
-                itemList[index] = new fillRect();
+            case 6: // 实心矩形
+                canvasList[index] = new filledRectangle();
                 break;
-            case 7:
-                itemList[index] = new Oval();
+            case 7: // 椭圆
+                canvasList[index] = new Ellipse();
                 break;
-            case 8:
-                itemList[index] = new fillOval();
+            case 8: // 实心椭圆
+                canvasList[index] = new filledEllipse();
                 break;
-            case 9:
-                itemList[index] = new Circle();
+            case 9: // 圆
+                canvasList[index] = new Circle();
                 break;
-            case 10:
-                itemList[index] = new fillCircle();
+            case 10: // 实心圆
+                canvasList[index] = new filledCircle();
                 break;
-            case 11:
-                itemList[index] = new RoundRect();
+            case 11: // 圆角矩形
+                canvasList[index] = new RoundRectangle();
                 break;
-            case 12:
-                itemList[index] = new fillRoundRect();
+            case 12: // 实心圆角矩形
+                canvasList[index] = new filledRoundRectangle();
                 break;
-            case 13:
-                stroke = (float) 50;
-                itemList[index] = new Pencil();
+            case 13: // 画刷
+                penStroke = (float) 50;
+                canvasList[index] = new Pencil();
                 break;
-            case 14:
-                itemList[index] = new Word();
+            case 14: // 文字输入
+                canvasList[index] = new Word();
                 break;
-            case 22:
+            case 22: // 橡皮擦
                 R = 255;
                 G = 255;
                 B = 255;
-                stroke = (float) 50;
-                itemList[index] = new Pencil();
+                penStroke = (float) 50;
+                canvasList[index] = new Pencil();
                 break;
         }
-        if (chosenStatus >= 3 && chosenStatus <= 14 || chosenStatus == 22) {
-            itemList[index].type = chosenStatus;
-            itemList[index].R = R;
-            itemList[index].G = G;
-            itemList[index].B = B;
-            itemList[index].stroke = stroke;
+        // 存储工具以及画笔属性信息到canvasList
+        if (toolStatus >= 3 && toolStatus <= 14 || toolStatus == 22) {
+            canvasList[index].type = toolStatus;
+            canvasList[index].R = R;
+            canvasList[index].G = G;
+            canvasList[index].B = B;
+            canvasList[index].stroke = penStroke;
         }
     }
 
-    public void setIndex(int x) {// 设置index的接口
+    // 设置index
+    public void setIndex(int x) {
         index = x;
     }
 
-    public int getIndex() {// 读取index的接口
+    // 返回index
+    public int getIndex() {
         return index;
     }
 
-    public void setColor(Color color)// 设置颜色的值
-    {
+    // 设置颜色
+    public void setColor(Color color) {
         this.color = color;
     }
 
-    public void setStroke(float f)// 设置画笔粗细的接口
-    {
-        stroke = f;
-    }
-
-    public void chooseColor()// 选择当前颜色
-    {
-        color = JColorChooser.showDialog(drawanyway, "请选择颜色", color);
+    // 选择颜色
+    public void chooseColor() {
+        color = JColorChooser.showDialog(drawanyway, "Choose Color", color);
         try {
             R = color.getRed();
             G = color.getGreen();
@@ -150,23 +153,24 @@ public class Canvas extends JPanel {
             G = 0;
             B = 0;
         }
-        itemList[index].R = R;
-        itemList[index].G = G;
-        itemList[index].B = B;
+        canvasList[index].R = R;
+        canvasList[index].G = G;
+        canvasList[index].B = B;
     }
 
-    public void colorBar(int cR, int cG, int cB) {
+    // 直接设置颜色RGB
+    public void setRGB(int cR, int cG, int cB) {
         R = cR;
         G = cG;
         B = cB;
-        itemList[index].R = R;
-        itemList[index].G = G;
-        itemList[index].B = B;
+        canvasList[index].R = R;
+        canvasList[index].G = G;
+        canvasList[index].B = B;
     }
 
-    public void changeColor()// 改变当前图片的颜色
-    {
-        color = JColorChooser.showDialog(drawanyway, "请选择颜色", color);
+    // 改变所选择的图形的颜色
+    public void changeColor() {
+        color = JColorChooser.showDialog(drawanyway, "Choose Color", color);
         try {
             R = color.getRed();
             G = color.getGreen();
@@ -176,113 +180,124 @@ public class Canvas extends JPanel {
             G = 0;
             B = 0;
         }
-        itemList[chooseni].R = R;
-        itemList[chooseni].G = G;
-        itemList[chooseni].B = B;
+        canvasList[selectPID].R = R;
+        canvasList[selectPID].G = G;
+        canvasList[selectPID].B = B;
     }
 
-    public void setStroke()// 画笔粗细的调整
-    {
+    // 设置画笔粗细
+    public void setStroke() {
         String input;
         input = JOptionPane.showInputDialog("请输入画笔的粗细( >0 )");
         try {
-            stroke = Float.parseFloat(input);
+            penStroke = Float.parseFloat(input);
 
         } catch (Exception e) {
-            stroke = 1.0f;
-
+            penStroke = 1.0f;
         }
-        itemList[index].stroke = stroke;
-
+        canvasList[index].stroke = penStroke;
     }
 
-    public void changeStroke()// 画笔粗细的改变（主要针对空心图形、直线、随笔画）
-    {
+    public void loadStroke() {
+        canvasList[index].stroke = penStroke;
+    }
+
+    public void setStroke(float f) {
+        penStroke = f;
+    }
+
+    public static float getStrokeWeight() {
+        return penStroke;
+    }
+
+    public void changeDrawStroke() {
         String input;
         input = JOptionPane.showInputDialog("请输入画笔的粗细( >0 )");
         try {
-            stroke = Float.parseFloat(input);
+            penStroke = Float.parseFloat(input);
 
         } catch (Exception e) {
-            stroke = 1.0f;
-
+            penStroke = 1.0f;
         }
-        itemList[chooseni].stroke = stroke;
-
+        canvasList[selectPID].stroke = penStroke;
     }
 
-    public void setChosenStatus(int i)// 设置当前选择（button触发时使用）
-    {
-        chosenStatus = i;
+    // 设置当前工具
+    public void setToolStatus(int i) {
+        toolStatus = i;
     }
 
-    public void changeText() {// 修改已有文字
+    // 修改文字
+    public void changeText() {
         String input;
         input = JOptionPane.showInputDialog("请输入你要修改为的文字");
-        itemList[chooseni].s1 = input;// 重设选中文本框的各参数
-        itemList[chooseni].type = f1 + f2;
-        itemList[chooseni].s2 = style;
-        itemList[chooseni].stroke = stroke;
-        itemList[chooseni].R = R;
-        itemList[chooseni].G = G;
-        itemList[chooseni].B = B;
+        // 重构文本框
+        canvasList[selectPID].s1 = input;
+        canvasList[selectPID].type = fontBold + fontItalic;
+        canvasList[selectPID].s2 = style;
+        canvasList[selectPID].stroke = penStroke;
+        canvasList[selectPID].R = R;
+        canvasList[selectPID].G = G;
+        canvasList[selectPID].B = B;
     }
 
-    public void setFont(int i, int font)// 设置字体
-    {
+    // 设置字体
+    public void setFont(int i, int font) {
         if (i == 1) {
-            f1 = font;
+            fontBold = font;
         } else
-            f2 = font;
+            fontItalic = font;
     }
 
-    public void fillColor(DrawGraph nowdrawing) {// 填充
-        int choice = nowdrawing.gettypechoice();// 用于判断填充图形类型
-        if (choice == 5) {
-            itemList[chooseni] = new fillRect();
-        } else if (choice == 7) {
-            itemList[chooseni] = new fillOval();
-        } else if (choice == 9) {
-            itemList[chooseni] = new fillCircle();
-        } else if (choice == 11) {
-            itemList[chooseni] = new fillRoundRect();
+    // 填充图形
+    public void fillGraph(DrawGraph cur) {
+        int curType = cur.gettypechoice();// 判断图形类型
+        if (curType == 5) {
+            canvasList[selectPID] = new filledRectangle();
+        } else if (curType == 7) {
+            canvasList[selectPID] = new filledEllipse();
+        } else if (curType == 9) {
+            canvasList[selectPID] = new filledCircle();
+        } else if (curType == 11) {
+            canvasList[selectPID] = new filledRoundRectangle();
         }
-        itemList[chooseni].x1 = nowdrawing.x1;
-        itemList[chooseni].x2 = nowdrawing.x2;
-        itemList[chooseni].y1 = nowdrawing.y1;
-        itemList[chooseni].y2 = nowdrawing.y2;
-        itemList[chooseni].R = R;
-        itemList[chooseni].G = G;
-        itemList[chooseni].B = B;
+        canvasList[selectPID].x1 = cur.x1;
+        canvasList[selectPID].x2 = cur.x2;
+        canvasList[selectPID].y1 = cur.y1;
+        canvasList[selectPID].y2 = cur.y2;
+        canvasList[selectPID].R = R;
+        canvasList[selectPID].G = G;
+        canvasList[selectPID].B = B;
     }
 
-    public void deletePaint(DrawGraph nowdrawing) {// 删除
-        int choice = nowdrawing.gettypechoice();
-        if (choice >= 3 && choice <= 14 || chosenStatus == 22) {
-            itemList[chooseni] = new Line();
+    // 删除所选图形
+    public void deletePaint(DrawGraph cur) {
+        int curType = cur.gettypechoice();
+        if (curType >= 3 && curType <= 14 || toolStatus == 22) {
+            canvasList[selectPID] = new Line();
         }
     }
 
-    // 鼠标事件MouseA类继承了MouseAdapter，用来完成鼠标的响应事件的操作
+    // 鼠标事件
     class MouseA extends MouseAdapter {
+        // 鼠标进入
         public void mouseEntered(MouseEvent me) {
-            // 鼠标进入
-            drawanyway.setStratBar("(" + me.getX() + " ," + me.getY() + ")");// 设置状态栏提示
+            drawanyway.setStatusBarText("(" + me.getX() + " ," + me.getY() + ")");
         }
+
+        // 鼠标退出
         public void mouseExited(MouseEvent me) {
-            // 鼠标退出
-            drawanyway.setStratBar("(" + me.getX() + " ," + me.getY() + ")");
+            drawanyway.setStatusBarText("(" + me.getX() + " ," + me.getY() + ")");
         }
+
+        // 鼠标按下
         public void mousePressed(MouseEvent me) {
-            // 鼠标按下
-            drawanyway.setStratBar("(" + me.getX() + " ," + me.getY() + ")");
-            if (chosenStatus >= 15 && chosenStatus <= 21)
-            // 删除，移动，更改大小，更改颜色，更改线型，填充六种操作都需要选定图形
-            {
-                for (chooseni = index - 1; chooseni >= 0; chooseni--) {
+            drawanyway.setStatusBarText("(" + me.getX() + " ," + me.getY() + ")");
+            if (toolStatus >= 15 && toolStatus <= 21) {
+                for (selectPID = index - 1; selectPID >= 0; selectPID--) {
                     // 从后到前寻找当前鼠标是否在某个图形内部
-                    if (itemList[chooseni].in(me.getX(), me.getY())) {
-                        if (chosenStatus == 16)// 移动图形需要记录press时的坐标
+                    if (canvasList[selectPID].in(me.getX(), me.getY())) {
+                        if (toolStatus == 16)// 移动图形需要记录press时的坐标
                         {
                             x0 = me.getX();
                             y0 = me.getY();
@@ -290,96 +305,96 @@ public class Canvas extends JPanel {
                         break;// 其它操作只需找到currenti即可
                     }
                 }
-                if (chooseni >= 0) {// 有图形被选中
+                if (selectPID >= 0) {// 有图形被选中
                     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));// 更改鼠标样式为手形
-                    if (chosenStatus == 20) {// 触发填充
-                        fillColor(itemList[chooseni]);
+                    if (toolStatus == 20) {// 触发填充
+                        fillGraph(canvasList[selectPID]);
                         setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));// 鼠标样式变回十字花
                         repaint();
-                    } else if (chosenStatus == 15) {// 触发删除
-                        deletePaint(itemList[chooseni]);
+                    } else if (toolStatus == 15) {// 触发删除
+                        deletePaint(canvasList[selectPID]);
                         setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                         repaint();
-                    } else if (chosenStatus == 18) {// 改变已有图形的颜色
+                    } else if (toolStatus == 18) {// 改变已有图形的颜色
                         changeColor();
                         repaint();
-                    } else if (chosenStatus == 19) {// 改变已有图形的线型
-                        changeStroke();
+                    } else if (toolStatus == 19) {// 改变已有图形的线型
+                        changeDrawStroke();
                         repaint();
-                    } else if (chosenStatus == 21) {// 改变已有文字
+                    } else if (toolStatus == 21) {// 改变已有文字
                         changeText();
                         repaint();
                     }
                 }
             } else {
-                itemList[index].x1 = itemList[index].x2 = me.getX();
-                itemList[index].y1 = itemList[index].y2 = me.getY();// x1,x2,y1,y2初始化
+                canvasList[index].x1 = canvasList[index].x2 = me.getX();
+                canvasList[index].y1 = canvasList[index].y2 = me.getY();// x1,x2,y1,y2初始化
                 // 如果当前选择为随笔画则进行下面的操作
-                if (chosenStatus == 3 || chosenStatus == 13 || chosenStatus == 22) {
-                    itemList[index].x1 = itemList[index].x2 = me.getX();
-                    itemList[index].y1 = itemList[index].y2 = me.getY();
+                if (toolStatus == 3 || toolStatus == 13 || toolStatus == 22) {
+                    canvasList[index].x1 = canvasList[index].x2 = me.getX();
+                    canvasList[index].y1 = canvasList[index].y2 = me.getY();
                     index++;
-                    createNewitem();// 创建新的图形的基本单元对象
+                    drawItem();// 创建新的图形的基本单元对象
                 }
                 // 如果选择图形的文字输入，则进行下面的操作
-                if (chosenStatus == 14) {
-                    tx = me.getX();
-                    ty = me.getY();
-                    tarea.setBounds(tx, ty, 0, 0);
-                    tarea.setBorder(new LineBorder(new java.awt.Color(127, 157, 185), 1, false));
+                if (toolStatus == 14) {
+                    textX = me.getX();
+                    textY = me.getY();
+                    textArea.setBounds(textX, textY, 0, 0);
+                    textArea.setBorder(new LineBorder(new java.awt.Color(127, 157, 185), 1, false));
                 }
             }
         }
 
         public void mouseReleased(MouseEvent me) {
             // 鼠标松开
-            drawanyway.setStratBar("鼠标松开在：[" + me.getX() + " ," + me.getY() + "]");
-            if (chosenStatus == 16) {// 移动结束
+            drawanyway.setStatusBarText("(" + me.getX() + " ," + me.getY() + ")");
+            if (toolStatus == 16) {// 移动结束
 
-                if (chooseni >= 0) {// 鼠标成功选择了某个图形
-                    itemList[chooseni].x1 = itemList[chooseni].x1 + me.getX() - x0;
-                    itemList[chooseni].y1 = itemList[chooseni].y1 + me.getY() - y0;
-                    itemList[chooseni].x2 = itemList[chooseni].x2 + me.getX() - x0;
-                    itemList[chooseni].y2 = itemList[chooseni].y2 + me.getY() - y0;
+                if (selectPID >= 0) {// 鼠标成功选择了某个图形
+                    canvasList[selectPID].x1 = canvasList[selectPID].x1 + me.getX() - x0;
+                    canvasList[selectPID].y1 = canvasList[selectPID].y1 + me.getY() - y0;
+                    canvasList[selectPID].x2 = canvasList[selectPID].x2 + me.getX() - x0;
+                    canvasList[selectPID].y2 = canvasList[selectPID].y2 + me.getY() - y0;
                     repaint();
                     setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                 }
-            } else if (chosenStatus == 17) {// 放大缩小结束
-                if (chooseni >= 0) {// 鼠标成功选择了某个图形
-                    itemList[chooseni].x2 = me.getX();
-                    itemList[chooseni].y2 = me.getY();
+            } else if (toolStatus == 17) {// 放大缩小结束
+                if (selectPID >= 0) {// 鼠标成功选择了某个图形
+                    canvasList[selectPID].x2 = me.getX();
+                    canvasList[selectPID].y2 = me.getY();
                     repaint();
                     setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                 }
             } else {
-                if (chosenStatus == 3 || chosenStatus == 13 || chosenStatus == 22) {// 随笔画绘制结束
-                    itemList[index].x1 = me.getX();
-                    itemList[index].y1 = me.getY();
-                } else if (chosenStatus == 14) {// 文本框绘制结束
-                    tarea.setBounds(Math.min(tx, me.getX()) + 130, Math.min(ty, me.getY()), Math.abs(tx - me.getX()),
-                            Math.abs(ty - me.getY()));// 绘制文本框
+                if (toolStatus == 3 || toolStatus == 13 || toolStatus == 22) {// 随笔画绘制结束
+                    canvasList[index].x1 = me.getX();
+                    canvasList[index].y1 = me.getY();
+                } else if (toolStatus == 14) {// 文本框绘制结束
+                    textArea.setBounds(Math.min(textX, me.getX()) + 130, Math.min(textY, me.getY()),
+                            Math.abs(textX - me.getX()), Math.abs(textY - me.getY()));// 绘制文本框
                     String input;
                     input = JOptionPane.showInputDialog("请输入你要写入的文字");
-                    tarea.setText(input);
-                    itemList[index].s1 = input;
-                    itemList[index].type = f1 + f2;// 设置粗体、斜体
-                    itemList[index].x2 = me.getX();
-                    itemList[index].y2 = me.getY();
-                    itemList[index].s2 = style;// 设置字体
+                    textArea.setText(input);
+                    canvasList[index].s1 = input;
+                    canvasList[index].type = fontBold + fontItalic;// 设置粗体、斜体
+                    canvasList[index].x2 = me.getX();
+                    canvasList[index].y2 = me.getY();
+                    canvasList[index].s2 = style;// 设置字体
 
                     index++;
-                    chosenStatus = 14;
-                    createNewitem();// 创建新的图形的基本单元对象
+                    toolStatus = 14;
+                    drawItem();// 创建新的图形的基本单元对象
                     repaint();
-                    tarea.setText("");// 重设文本框，为下一次使用做准备
-                    tarea.setBounds(tx, ty, 0, 0);
+                    textArea.setText("");// 重设文本框，为下一次使用做准备
+                    textArea.setBounds(textX, textY, 0, 0);
                 }
-                if (chosenStatus >= 3 && chosenStatus <= 13 || chosenStatus == 22) {
-                    itemList[index].x2 = me.getX();
-                    itemList[index].y2 = me.getY();
+                if (toolStatus >= 3 && toolStatus <= 13 || toolStatus == 22) {
+                    canvasList[index].x2 = me.getX();
+                    canvasList[index].y2 = me.getY();
                     repaint();
                     index++;
-                    createNewitem();// 创建新的图形的基本单元对象
+                    drawItem();// 创建新的图形的基本单元对象
                 }
             }
         }
@@ -389,32 +404,32 @@ public class Canvas extends JPanel {
     class MouseB extends MouseMotionAdapter {
         public void mouseDragged(MouseEvent me)// 鼠标的拖动
         {
-            drawanyway.setStratBar("鼠标拖动在：[" + me.getX() + " ," + me.getY() + "]");
-            if (chosenStatus == 3 || chosenStatus == 13 || chosenStatus == 22) {// 任意线的画法
-                itemList[index - 1].x1 = itemList[index].x2 = itemList[index].x1 = me.getX();
-                itemList[index - 1].y1 = itemList[index].y2 = itemList[index].y1 = me.getY();
+            drawanyway.setStatusBarText("(" + me.getX() + " ," + me.getY() + ")");
+            if (toolStatus == 3 || toolStatus == 13 || toolStatus == 22) {// 任意线的画法
+                canvasList[index - 1].x1 = canvasList[index].x2 = canvasList[index].x1 = me.getX();
+                canvasList[index - 1].y1 = canvasList[index].y2 = canvasList[index].y1 = me.getY();
                 index++;
-                createNewitem();// 创建新的图形的基本单元对象
+                drawItem();// 创建新的图形的基本单元对象
                 repaint();
-            } else if (chosenStatus == 17) {
-                if (chooseni >= 0) {// 移动的过程
-                    itemList[chooseni].x1 = itemList[chooseni].x1 + me.getX() - x0;
-                    itemList[chooseni].y1 = itemList[chooseni].y1 + me.getY() - y0;
-                    itemList[chooseni].x2 = itemList[chooseni].x2 + me.getX() - x0;
-                    itemList[chooseni].y2 = itemList[chooseni].y2 + me.getY() - y0;
+            } else if (toolStatus == 17) {
+                if (selectPID >= 0) {// 移动的过程
+                    canvasList[selectPID].x1 = canvasList[selectPID].x1 + me.getX() - x0;
+                    canvasList[selectPID].y1 = canvasList[selectPID].y1 + me.getY() - y0;
+                    canvasList[selectPID].x2 = canvasList[selectPID].x2 + me.getX() - x0;
+                    canvasList[selectPID].y2 = canvasList[selectPID].y2 + me.getY() - y0;
                     x0 = me.getX();
                     y0 = me.getY();
                     repaint();
                 }
-            } else if (chosenStatus == 18) {// 放大缩小的过程
-                if (chooseni >= 0) {
-                    itemList[chooseni].x2 = me.getX();
-                    itemList[chooseni].y2 = me.getY();
+            } else if (toolStatus == 18) {// 放大缩小的过程
+                if (selectPID >= 0) {
+                    canvasList[selectPID].x2 = me.getX();
+                    canvasList[selectPID].y2 = me.getY();
                     repaint();
                 }
-            } else if (chosenStatus >= 3 && chosenStatus <= 14 || chosenStatus == 22) {// 绘制图形的过程
-                itemList[index].x2 = me.getX();
-                itemList[index].y2 = me.getY();
+            } else if (toolStatus >= 3 && toolStatus <= 14 || toolStatus == 22) {// 绘制图形的过程
+                canvasList[index].x2 = me.getX();
+                canvasList[index].y2 = me.getY();
                 repaint();
             }
             // repaint();
@@ -422,14 +437,14 @@ public class Canvas extends JPanel {
 
         public void mouseMoved(MouseEvent me)// 鼠标的移动
         {
-            drawanyway.setStratBar("鼠标移动在：[" + me.getX() + " ," + me.getY() + "]");
-            for (chooseni = index - 1; chooseni >= 0; chooseni--) {
+            drawanyway.setStatusBarText("(" + me.getX() + " ," + me.getY() + ")");
+            for (selectPID = index - 1; selectPID >= 0; selectPID--) {
                 // 从后到前寻找当前鼠标是否在某个图形内部
-                if (itemList[chooseni].in(me.getX(), me.getY())) {
+                if (canvasList[selectPID].in(me.getX(), me.getY())) {
                     break;// 其它操作只需找到currenti即可
                 }
             }
-            if (chooseni >= 0) {// 有图形被选中
+            if (selectPID >= 0) {// 有图形被选中
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));// 更改鼠标样式为箭头
             } else {
                 setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));

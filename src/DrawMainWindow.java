@@ -14,7 +14,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import javax.swing.*;
 
 // 主界面类
@@ -160,7 +159,7 @@ public class DrawMainWindow extends JFrame implements ActionListener {
         fontPanel.add(fontStyles);
 
         JPanel strokePanel = new JPanel();
-        JSlider slider = new JSlider(0, 50, (int) Canvas.getStrokeWeight());
+        JSlider slider = new JSlider(0, 100, 1);
         // 设置主刻度间隔
         slider.setMajorTickSpacing(5);
         // 设置次刻度间隔
@@ -202,7 +201,7 @@ public class DrawMainWindow extends JFrame implements ActionListener {
 
         slider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                canvas.setStroke(slider.getValue());
+                Canvas.setStroke(slider.getValue());
             }
         });
     }
@@ -216,7 +215,7 @@ public class DrawMainWindow extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (flag) {
             canvas.setRGB(0, 0, 0);
-            canvas.setStroke(1);
+            Canvas.setStroke(1);
             flag = false;
         }
         // 根据当前画笔颜色设置Color的背景色

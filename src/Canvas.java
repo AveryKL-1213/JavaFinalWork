@@ -1,6 +1,7 @@
 package JavaFinalWork.src;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -8,10 +9,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import javax.swing.JColorChooser;
+import javax.swing.*;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 // 画布
 public class Canvas extends JPanel {
@@ -19,7 +25,7 @@ public class Canvas extends JPanel {
     private static final long serialVersionUID = 1L;
 
     DrawMainWindow drawanyway = null;
-    DrawGraph[] canvasList = new DrawGraph[5000]; // 储存画布
+    DrawGraph[] canvasList = new DrawGraph[3000]; // 储存画布
 
     int selectPID = 0; // 选中图形下标
     int x0, y0; // 记录移动图形鼠标起始位置
@@ -50,16 +56,16 @@ public class Canvas extends JPanel {
 
     public void paintComponent(Graphics G) {
         super.paintComponent(G);
-        Graphics2D G2D = (Graphics2D) G;
+        Graphics2D Graph2d = (Graphics2D) G;
         int j = 0;
         while (j <= index) {
-            setPen(G2D, canvasList[j]);
+            setPen(Graph2d, canvasList[j]);
             j++;
         }
     }
 
-    void setPen(Graphics2D G2D, DrawGraph i) {
-        i.draw(G2D);
+    void setPen(Graphics2D Graph2d, DrawGraph i) {
+        i.Draw(Graph2d);
     }
 
     // 绘制图形的基本单元对象
@@ -118,7 +124,7 @@ public class Canvas extends JPanel {
         }
         // 存储工具以及画笔属性信息到canvasList
         if (toolStatus >= 3 && toolStatus <= 14 || toolStatus == 22) {
-            canvasList[index].type = toolStatus;
+            canvasList[index].toolFlag = toolStatus;
             canvasList[index].R = R;
             canvasList[index].G = G;
             canvasList[index].B = B;
@@ -187,14 +193,8 @@ public class Canvas extends JPanel {
 
     // 设置画笔粗细
     public void setStroke() {
-        String input;
-        input = JOptionPane.showInputDialog("请输入画笔的粗细( >0 )");
-        try {
-            penStroke = Float.parseFloat(input);
-
-        } catch (Exception e) {
-            penStroke = 1.0f;
-        }
+        new StrokeSlider();
+        penStroke = StrokeSlider.getWeight();
         canvasList[index].stroke = penStroke;
     }
 
@@ -202,7 +202,7 @@ public class Canvas extends JPanel {
         canvasList[index].stroke = penStroke;
     }
 
-    public void setStroke(float f) {
+    public static void setStroke(float f) {
         penStroke = f;
     }
 
@@ -212,10 +212,9 @@ public class Canvas extends JPanel {
 
     public void changeDrawStroke() {
         String input;
-        input = JOptionPane.showInputDialog("请输入画笔的粗细( >0 )");
+        input = JOptionPane.showInputDialog("Input Stroke Weight(a float number)");
         try {
             penStroke = Float.parseFloat(input);
-
         } catch (Exception e) {
             penStroke = 1.0f;
         }
@@ -230,11 +229,11 @@ public class Canvas extends JPanel {
     // 修改文字
     public void changeText() {
         String input;
-        input = JOptionPane.showInputDialog("请输入你要修改为的文字");
+        input = JOptionPane.showInputDialog("Input words to change to");
         // 重构文本框
-        canvasList[selectPID].s1 = input;
-        canvasList[selectPID].type = fontBold + fontItalic;
-        canvasList[selectPID].s2 = style;
+        canvasList[selectPID].txtContant = input;
+        canvasList[selectPID].toolFlag = fontBold + fontItalic;
+        canvasList[selectPID].fontStyle = style;
         canvasList[selectPID].stroke = penStroke;
         canvasList[selectPID].R = R;
         canvasList[selectPID].G = G;
@@ -251,7 +250,7 @@ public class Canvas extends JPanel {
 
     // 填充图形
     public void fillGraph(DrawGraph cur) {
-        int curType = cur.gettypechoice();// 判断图形类型
+        int curType = cur.getGraph();// 判断图形类型
         if (curType == 5) {
             canvasList[selectPID] = new filledRectangle();
         } else if (curType == 7) {
@@ -272,7 +271,7 @@ public class Canvas extends JPanel {
 
     // 删除所选图形
     public void deletePaint(DrawGraph cur) {
-        int curType = cur.gettypechoice();
+        int curType = cur.getGraph();
         if (curType >= 3 && curType <= 14 || toolStatus == 22) {
             canvasList[selectPID] = new Line();
         }
@@ -292,11 +291,12 @@ public class Canvas extends JPanel {
 
         // 鼠标按下
         public void mousePressed(MouseEvent me) {
+            canvasList[index].stroke = penStroke;
             drawanyway.setStatusBarText("(" + me.getX() + " ," + me.getY() + ")");
             if (toolStatus >= 15 && toolStatus <= 21) {
                 for (selectPID = index - 1; selectPID >= 0; selectPID--) {
                     // 从后到前寻找当前鼠标是否在某个图形内部
-                    if (canvasList[selectPID].in(me.getX(), me.getY())) {
+                    if (canvasList[selectPID].isInGraph(me.getX(), me.getY())) {
                         if (toolStatus == 16)// 移动图形需要记录press时的坐标
                         {
                             x0 = me.getX();
@@ -329,7 +329,7 @@ public class Canvas extends JPanel {
             } else {
                 canvasList[index].x1 = canvasList[index].x2 = me.getX();
                 canvasList[index].y1 = canvasList[index].y2 = me.getY();// x1,x2,y1,y2初始化
-                // 如果当前选择为随笔画则进行下面的操作
+                // 铅笔
                 if (toolStatus == 3 || toolStatus == 13 || toolStatus == 22) {
                     canvasList[index].x1 = canvasList[index].x2 = me.getX();
                     canvasList[index].y1 = canvasList[index].y2 = me.getY();
@@ -350,7 +350,6 @@ public class Canvas extends JPanel {
             // 鼠标松开
             drawanyway.setStatusBarText("(" + me.getX() + " ," + me.getY() + ")");
             if (toolStatus == 16) {// 移动结束
-
                 if (selectPID >= 0) {// 鼠标成功选择了某个图形
                     canvasList[selectPID].x1 = canvasList[selectPID].x1 + me.getX() - x0;
                     canvasList[selectPID].y1 = canvasList[selectPID].y1 + me.getY() - y0;
@@ -374,13 +373,13 @@ public class Canvas extends JPanel {
                     textArea.setBounds(Math.min(textX, me.getX()) + 130, Math.min(textY, me.getY()),
                             Math.abs(textX - me.getX()), Math.abs(textY - me.getY()));// 绘制文本框
                     String input;
-                    input = JOptionPane.showInputDialog("请输入你要写入的文字");
+                    input = JOptionPane.showInputDialog("Input words");
                     textArea.setText(input);
-                    canvasList[index].s1 = input;
-                    canvasList[index].type = fontBold + fontItalic;// 设置粗体、斜体
+                    canvasList[index].txtContant = input;
+                    canvasList[index].toolFlag = fontBold + fontItalic;// 设置粗体、斜体
                     canvasList[index].x2 = me.getX();
                     canvasList[index].y2 = me.getY();
-                    canvasList[index].s2 = style;// 设置字体
+                    canvasList[index].fontStyle = style;// 设置字体
 
                     index++;
                     toolStatus = 14;
@@ -432,7 +431,6 @@ public class Canvas extends JPanel {
                 canvasList[index].y2 = me.getY();
                 repaint();
             }
-            // repaint();
         }
 
         public void mouseMoved(MouseEvent me)// 鼠标的移动
@@ -440,7 +438,7 @@ public class Canvas extends JPanel {
             drawanyway.setStatusBarText("(" + me.getX() + " ," + me.getY() + ")");
             for (selectPID = index - 1; selectPID >= 0; selectPID--) {
                 // 从后到前寻找当前鼠标是否在某个图形内部
-                if (canvasList[selectPID].in(me.getX(), me.getY())) {
+                if (canvasList[selectPID].isInGraph(me.getX(), me.getY())) {
                     break;// 其它操作只需找到currenti即可
                 }
             }
@@ -452,4 +450,56 @@ public class Canvas extends JPanel {
         }
     }
 
+}
+
+class StrokeSlider extends JFrame implements ActionListener {
+
+    private static final long serialVersionUID = 1L;
+    JFrame jf;
+    JButton confirmButton;
+    static private int weight;
+
+    public StrokeSlider() {
+        jf = new JFrame("Set Stroke Weight");
+        jf.setSize(300, 130);
+        jf.setLocationRelativeTo(null);
+        jf.setResizable(false);
+        jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        JPanel panel = new JPanel();
+        // 创建一个滑块，最小值、最大值、初始值 分别为 0、20、10
+        final JSlider slider = new JSlider(0, 100, (int) Canvas.getStrokeWeight());
+        // 设置主刻度间隔
+        slider.setMajorTickSpacing(10);
+        // 设置次刻度间隔
+        slider.setMinorTickSpacing(1);
+        // 绘制 刻度 和 标签
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        // 添加刻度改变监听器
+        slider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                weight = slider.getValue();
+            }
+        });
+
+        confirmButton = new JButton("Confirm");
+        confirmButton.setFont(new Font(Font.DIALOG, Font.BOLD, 15));
+        confirmButton.addActionListener(this);
+        panel.add(slider);
+        panel.add(confirmButton);
+        jf.setContentPane(panel);
+        jf.setVisible(true);
+
+    }
+
+    public static int getWeight() {
+        return weight;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == confirmButton) {
+            Canvas.setStroke(weight);
+            jf.dispose();
+        }
+    }
 }

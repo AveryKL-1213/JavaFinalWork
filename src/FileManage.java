@@ -19,7 +19,7 @@ public class FileManage {
         canvas.setIndex(0); // 清空画板
         canvas.setToolStatus(3); // 默认为铅笔
         canvas.setColor(Color.black); // 默认黑色
-        canvas.setStroke(1.0f);
+        Canvas.setStroke(1.0f);
         canvas.drawItem();
         canvas.repaint();
     }

@@ -6,48 +6,97 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.io.Serializable;
 
-// 绘图类
+// 绘图父类
 public class DrawGraph implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    int x1, x2, y1, y2; // 定义坐标属性
-    int R, G, B; // 定义色彩属性
-    float stroke; // 定义线条粗细的属性
-    int type; // 定义字体属性
-    String s1; // 定义字体的风格
-    String s2; // 定义字体的风格
-    int typechoice; // 记录图形属性，与currentchoice相匹配
+    int toolFlag; // 字体
+    String txtContant; // 文本框内容
+    String fontStyle; // 字体加粗/斜体
+    int x1, x2, y1, y2; // 坐标
+    int R, G, B; // 颜色RGB
+    float stroke; // 线条粗细
+    int Graphtype; // 图形类型
 
-    int gettypechoice() {
-        return typechoice;
-    }// 获取typechoice，填充用
+    // 返回图形类型
+    int getGraph() {
+        return Graphtype;
+    }
 
-    void draw(Graphics2D g2d) {
-    }// 定义绘图函数
+    // 绘图函数
+    void Draw(Graphics2D Graph2d) {
+    }
 
-    boolean in(int x, int y) {
+    // 判断鼠标是否在图形内
+    boolean isInGraph(int x, int y) {
         return false;
-    }// 判断当前点是否在此图形内（或附近），选择图形时使用
+    }
 }
 
-class Line extends DrawGraph// 直线类
-{
+// 铅笔
+class Pencil extends DrawGraph {
+
     private static final long serialVersionUID = 1L;
 
-    int gettypechoice() {
-        typechoice = 4;
-        return typechoice;
+    int getGraph() {
+        Graphtype = 3;
+        return Graphtype;
     }
 
-    void draw(Graphics2D g2d) {
-        g2d.setPaint(new Color(R, G, B));// 为 Graphics2D 上下文设置 Paint 属性。
-        g2d.setStroke(new BasicStroke(stroke, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
-        // setStroke(Stroke s)为 Graphics2D 上下文设置 Stroke
-        g2d.drawLine(x1, y1, x2, y2);// 画直线
+    void Draw(Graphics2D Graph2d) {
+        Graph2d.setPaint(new Color(R, G, B)); // 设置颜色
+        Graph2d.setStroke(new BasicStroke(stroke, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL)); // 设置画笔
+        Graph2d.drawLine(x1, y1, x2, y2); // 绘制，铅笔通过短直线实现
+    }
+    // 不重写覆盖isInGraph，不可被选中，主要是太麻烦了
+}
+
+// 文本框
+class Word extends DrawGraph {
+
+    private static final long serialVersionUID = 1L;
+
+    int getGraph() {
+        Graphtype = 13;
+        return Graphtype;
     }
 
-    boolean in(int x, int y) {// 选中直线的条件，判断当前点是否靠近直线，即衡量“靠近直线”的方法
+    void Draw(Graphics2D Graph2d) {
+        Graph2d.setPaint(new Color(R, G, B));
+        Graph2d.setFont(new Font(fontStyle, toolFlag, ((int) stroke) * 25)); // 设置字体
+        if (txtContant != null) {
+            Graph2d.drawString(txtContant, x1, y1 + (int) stroke * 25);
+        }
+    }
+
+    boolean isInGraph(int x, int y) {
+        if (x >= Math.min(x1, x2) && x <= Math.max(x1, x2) && y >= Math.min(y1, y2) && y <= Math.max(y1, y2)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+// 直线
+class Line extends DrawGraph {
+
+    private static final long serialVersionUID = 1L;
+
+    int getGraph() {
+        Graphtype = 4;
+        return Graphtype;
+    }
+
+    void Draw(Graphics2D Graph2d) {
+        Graph2d.setPaint(new Color(R, G, B));
+        Graph2d.setStroke(new BasicStroke(stroke, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+        Graph2d.drawLine(x1, y1, x2, y2);
+    }
+
+    boolean isInGraph(int x, int y) {
+        // 判断当前点是否靠近直线
         if (Math.abs(x2 - x1) <= 5) {
             if (((x >= (x1 - 5)) && (x <= (x1 + 5))) && (y >= Math.min(y1, y2) && y <= Math.max(y1, y2))) {
                 return true;
@@ -58,31 +107,31 @@ class Line extends DrawGraph// 直线类
                 return true;
             }
         }
-        if (Math.abs((x2 - x1) * (y - y1) - (y2 - y1) * (x - x1)) < Math.abs(5 * (x2 - x1))// 直线方程变形
-                && ((x >= Math.min(x1, x2)) && (x <= Math.max(x1, x2))
-                        && ((y >= Math.min(y1, y2)) && (y <= Math.max(y1, y2))))) {
+        if (Math.abs((x2 - x1) * (y - y1) - (y2 - y1) * (x - x1)) < Math.abs(5 * (x2 - x1)) && ((x >= Math.min(x1, x2))
+                && (x <= Math.max(x1, x2)) && ((y >= Math.min(y1, y2)) && (y <= Math.max(y1, y2))))) {
             return true;
         }
         return false;
     }
 }
 
-class Rectangle extends DrawGraph {// 矩形类
+// 矩形
+class Rectangle extends DrawGraph {
 
     private static final long serialVersionUID = 1L;
 
-    int gettypechoice() {
-        typechoice = 5;
-        return typechoice;
+    int getGraph() {
+        Graphtype = 5;
+        return Graphtype;
     }
 
-    void draw(Graphics2D g2d) {
-        g2d.setPaint(new Color(R, G, B));
-        g2d.setStroke(new BasicStroke(stroke));
-        g2d.drawRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
+    void Draw(Graphics2D Graph2d) {
+        Graph2d.setPaint(new Color(R, G, B));
+        Graph2d.setStroke(new BasicStroke(stroke));
+        Graph2d.drawRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
     }
 
-    boolean in(int x, int y) {// 判断当前点是否在矩形内
+    boolean isInGraph(int x, int y) {
         if (x >= Math.min(x1, x2) && x <= Math.max(x1, x2) && y >= Math.min(y1, y2) && y <= Math.max(y1, y2)) {
             return true;
         } else {
@@ -91,22 +140,23 @@ class Rectangle extends DrawGraph {// 矩形类
     }
 }
 
-class filledRectangle extends DrawGraph {// 实心矩形类
+// 实心矩形类
+class filledRectangle extends DrawGraph {
 
     private static final long serialVersionUID = 1L;
 
-    int gettypechoice() {
-        typechoice = 6;
-        return typechoice;
+    int getGraph() {
+        Graphtype = 6;
+        return Graphtype;
     }
 
-    void draw(Graphics2D g2d) {
-        g2d.setPaint(new Color(R, G, B));
-        g2d.setStroke(new BasicStroke(stroke));
-        g2d.fillRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
+    void Draw(Graphics2D Graph2d) {
+        Graph2d.setPaint(new Color(R, G, B));
+        Graph2d.setStroke(new BasicStroke(stroke));
+        Graph2d.fillRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
     }
 
-    boolean in(int x, int y) {// 判断点是否在实心矩形内
+    boolean isInGraph(int x, int y) {
         if (x >= Math.min(x1, x2) && x <= Math.max(x1, x2) && y >= Math.min(y1, y2) && y <= Math.max(y1, y2)) {
             return true;
         } else {
@@ -115,22 +165,53 @@ class filledRectangle extends DrawGraph {// 实心矩形类
     }
 }
 
-class Ellipse extends DrawGraph {// 椭圆类
+// 椭圆类
+class Ellipse extends DrawGraph {
 
     private static final long serialVersionUID = 1L;
 
-    int gettypechoice() {
-        typechoice = 7;
-        return typechoice;
+    int getGraph() {
+        Graphtype = 7;
+        return Graphtype;
     }
 
-    void draw(Graphics2D g2d) {
-        g2d.setPaint(new Color(R, G, B));
-        g2d.setStroke(new BasicStroke(stroke));
-        g2d.drawOval(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
+    void Draw(Graphics2D Graph2d) {
+        Graph2d.setPaint(new Color(R, G, B));
+        Graph2d.setStroke(new BasicStroke(stroke));
+        Graph2d.drawOval(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
     }
 
-    boolean in(int x, int y) {// 判断点是否再椭圆内（基于drawOval函数参数含义及椭圆数学方程推导）
+    // 判断圆是否被选中
+    boolean isInGraph(int x, int y) {
+        double x0 = ((double) (x2 + x1) / 2);
+        double y0 = ((double) (y2 + y1) / 2);
+        double xi = Math.pow((x2 - x1), 2);
+        double yi = Math.pow((y2 - y1), 2);
+        // 由drawOval函数及椭圆数学方程推导
+        if (4 * Math.pow((x - x0), 2) * yi + 4 * Math.pow((y - y0), 2) * xi <= (xi * yi)) {
+            return true;
+        }
+        return false;
+    }
+}
+
+// 实心椭圆类
+class filledEllipse extends DrawGraph {
+
+    private static final long serialVersionUID = 1L;
+
+    int getGraph() {
+        Graphtype = 8;
+        return Graphtype;
+    }
+
+    void Draw(Graphics2D Graph2d) {
+        Graph2d.setPaint(new Color(R, G, B));
+        Graph2d.setStroke(new BasicStroke(stroke));
+        Graph2d.fillOval(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
+    }
+
+    boolean isInGraph(int x, int y) {
         double x0 = ((double) (x2 + x1) / 2);
         double y0 = ((double) (y2 + y1) / 2);
         double xi = Math.pow((x2 - x1), 2);
@@ -142,80 +223,24 @@ class Ellipse extends DrawGraph {// 椭圆类
     }
 }
 
-class filledEllipse extends DrawGraph {// 实心椭圆类
+// 圆形类
+class Circle extends DrawGraph {
 
     private static final long serialVersionUID = 1L;
 
-    int gettypechoice() {
-        typechoice = 8;
-        return typechoice;
+    int getGraph() {
+        Graphtype = 9;
+        return Graphtype;
     }
 
-    void draw(Graphics2D g2d) {
-        g2d.setPaint(new Color(R, G, B));
-        g2d.setStroke(new BasicStroke(stroke));
-        g2d.fillOval(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
-    }
-
-    boolean in(int x, int y) {
-        double x0 = ((double) (x2 + x1) / 2);
-        double y0 = ((double) (y2 + y1) / 2);
-        double xi = Math.pow((x2 - x1), 2);
-        double yi = Math.pow((y2 - y1), 2);
-        if (4 * Math.pow((x - x0), 2) * yi + 4 * Math.pow((y - y0), 2) * xi <= (xi * yi)) {
-            return true;
-        }
-        return false;
-    }
-}
-
-class Circle extends DrawGraph {// 圆形类
-
-    private static final long serialVersionUID = 1L;
-
-    int gettypechoice() {
-        typechoice = 9;
-        return typechoice;
-    }
-
-    void draw(Graphics2D g2d) {
-        g2d.setPaint(new Color(R, G, B));
-        g2d.setStroke(new BasicStroke(stroke));
-        g2d.drawOval(Math.min(x1, x2), Math.min(y1, y2), Math.max(Math.abs(x1 - x2), Math.abs(y1 - y2)),
+    void Draw(Graphics2D Graph2d) {
+        Graph2d.setPaint(new Color(R, G, B));
+        Graph2d.setStroke(new BasicStroke(stroke));
+        Graph2d.drawOval(Math.min(x1, x2), Math.min(y1, y2), Math.max(Math.abs(x1 - x2), Math.abs(y1 - y2)),
                 Math.max(Math.abs(x1 - x2), Math.abs(y1 - y2)));
     }
 
-    boolean in(int x, int y) {// 判断点是否再圆内（基于drawOval函数参数含义及椭圆数学方程推导）
-        double a = Math.min(x1, x2);
-        double b = Math.min(y1, y2);
-        double d = Math.max(Math.abs(x1 - x2), Math.abs(y1 - y2));
-        double x0 = (a + d / 2);
-        double y0 = (b + d / 2);
-        if ((Math.pow(x - x0, 2) + Math.pow(y - y0, 2)) <= Math.pow(d / 2, 2)) {
-            return true;
-        }
-        return false;
-
-    }
-}
-
-class filledCircle extends DrawGraph {// 实心圆类
-
-    private static final long serialVersionUID = 1L;
-
-    int gettypechoice() {
-        typechoice = 10;
-        return typechoice;
-    }
-
-    void draw(Graphics2D g2d) {
-        g2d.setPaint(new Color(R, G, B));
-        g2d.setStroke(new BasicStroke(stroke));
-        g2d.fillOval(Math.min(x1, x2), Math.min(y1, y2), Math.max(Math.abs(x1 - x2), Math.abs(y1 - y2)),
-                Math.max(Math.abs(x1 - x2), Math.abs(y1 - y2)));
-    }
-
-    boolean in(int x, int y) {// 判断点是否再圆内（基于drawOval函数参数含义及椭圆数学方程推导）
+    boolean isInGraph(int x, int y) {
         double a = Math.min(x1, x2);
         double b = Math.min(y1, y2);
         double d = Math.max(Math.abs(x1 - x2), Math.abs(y1 - y2));
@@ -228,91 +253,79 @@ class filledCircle extends DrawGraph {// 实心圆类
     }
 }
 
-class RoundRectangle extends DrawGraph {// 圆角矩形类
+// 实心圆类
+class filledCircle extends DrawGraph {
 
     private static final long serialVersionUID = 1L;
 
-    int gettypechoice() {
-        typechoice = 11;
-        return typechoice;
+    int getGraph() {
+        Graphtype = 10;
+        return Graphtype;
     }
 
-    void draw(Graphics2D g2d) {
-        g2d.setPaint(new Color(R, G, B));
-        g2d.setStroke(new BasicStroke(stroke));
-        g2d.drawRoundRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2), 50, 35);
+    void Draw(Graphics2D Graph2d) {
+        Graph2d.setPaint(new Color(R, G, B));
+        Graph2d.setStroke(new BasicStroke(stroke));
+        Graph2d.fillOval(Math.min(x1, x2), Math.min(y1, y2), Math.max(Math.abs(x1 - x2), Math.abs(y1 - y2)),
+                Math.max(Math.abs(x1 - x2), Math.abs(y1 - y2)));
     }
 
-    boolean in(int x, int y) {// 判断点是否在圆角矩形内（近似矩形处理）
+    boolean isInGraph(int x, int y) {
+        double a = Math.min(x1, x2);
+        double b = Math.min(y1, y2);
+        double d = Math.max(Math.abs(x1 - x2), Math.abs(y1 - y2));
+        double x0 = (a + d / 2);
+        double y0 = (b + d / 2);
+        if ((Math.pow(x - x0, 2) + Math.pow(y - y0, 2)) <= Math.pow(d / 2, 2)) {
+            return true;
+        }
+        return false;
+    }
+}
+
+// 圆角矩形类
+class RoundRectangle extends DrawGraph {
+
+    private static final long serialVersionUID = 1L;
+
+    int getGraph() {
+        Graphtype = 11;
+        return Graphtype;
+    }
+
+    void Draw(Graphics2D Graph2d) {
+        Graph2d.setPaint(new Color(R, G, B));
+        Graph2d.setStroke(new BasicStroke(stroke));
+        Graph2d.drawRoundRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2), 50, 35);
+    }
+
+    boolean isInGraph(int x, int y) {
+        // 当作近似矩形处理
         if (x >= Math.min(x1, x2) && x <= Math.max(x1, x2) && y >= Math.min(y1, y2) && y <= Math.max(y1, y2)) {
             return true;
         } else {
             return false;
         }
     }
-
 }
 
-class filledRoundRectangle extends DrawGraph {// 实心圆角矩形类
+// 实心圆角矩形类
+class filledRoundRectangle extends DrawGraph {
 
     private static final long serialVersionUID = 1L;
 
-    int gettypechoice() {
-        typechoice = 12;
-        return typechoice;
+    int getGraph() {
+        Graphtype = 12;
+        return Graphtype;
     }
 
-    void draw(Graphics2D g2d) {
-        g2d.setPaint(new Color(R, G, B));
-        g2d.setStroke(new BasicStroke(stroke));
-        g2d.fillRoundRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2), 50, 35);
+    void Draw(Graphics2D Graph2d) {
+        Graph2d.setPaint(new Color(R, G, B));
+        Graph2d.setStroke(new BasicStroke(stroke));
+        Graph2d.fillRoundRect(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2), 50, 35);
     }
 
-    boolean in(int x, int y) {
-        if (x >= Math.min(x1, x2) && x <= Math.max(x1, x2) && y >= Math.min(y1, y2) && y <= Math.max(y1, y2)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-}
-
-class Pencil extends DrawGraph {// 随笔画类
-
-    private static final long serialVersionUID = 1L;
-
-    int gettypechoice() {
-        typechoice = 3;
-        return typechoice;
-    }
-
-    void draw(Graphics2D g2d) {
-        g2d.setPaint(new Color(R, G, B));
-        g2d.setStroke(new BasicStroke(stroke, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
-        g2d.drawLine(x1, y1, x2, y2);
-    }
-    // in函数继承返回false，即随笔画不能被选中
-}
-
-class Word extends DrawGraph {// 输入文字类
-
-    private static final long serialVersionUID = 1L;
-
-    int gettypechoice() {
-        typechoice = 13;
-        return typechoice;
-    }
-
-    void draw(Graphics2D g2d) {
-        g2d.setPaint(new Color(R, G, B));
-        g2d.setFont(new Font(s2, type, ((int) stroke) * 18));// 设置字体
-        if (s1 != null) {
-            g2d.drawString(s1, x1, y1 + (int) stroke * 18);
-        }
-    }
-
-    boolean in(int x, int y) {
+    boolean isInGraph(int x, int y) {
         if (x >= Math.min(x1, x2) && x <= Math.max(x1, x2) && y >= Math.min(y1, y2) && y <= Math.max(y1, y2)) {
             return true;
         } else {
